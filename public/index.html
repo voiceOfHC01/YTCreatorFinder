@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CreatorScout - Discover YouTube Creators by Niche & Size</title>
+  <meta name="description" content="Discover active Tier-1 YouTube micro-creators by niche, subscriber size, and country — or scan video comments for timestamps and safe mentions.">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="alternate icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/logo.png">
+  
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ========================================================== */
+    /* THEME SYSTEM: HIGH-CONTRAST CSS VARIABLES                  */
+    /* ========================================================== */
+    :root {
+      /* Light Mode Palette */
+      --bg-page: #f8faf9;
+      --bg-surface: #ffffff;
+      --bg-surface-hover: #f1f5f3;
+      --bg-pill: #eef3f1;
+      --bg-pill-hover: #e2ebe7;
+      --bg-pill-active: #14241f;
+      --text-pill-active: #ffffff;
+      --bg-banner: #e6f2ee;
+      --text-banner: #1d463a;
+      --border-color: #dce6e2;
+      --border-subtle: #e8f0ec;
+      --text-primary: #14241f;
+      --text-secondary: #435b53;
+      --text-muted: #6e857d;
+      --accent-btn: #2f5c4f;
+      --accent-btn-hover: #24483e;
+      --accent-btn-text: #ffffff;
+      --input-bg: #ffffff;
+      --input-border: #dce6e2;
+      --card-border: #dce6e2;
+      --card-hover-border: #b8ccc4;
+      --tag-collab-bg: #e6f7ef;
+      --tag-collab-text: #0d6840;
+      --tag-collab-border: #c3ebd5;
+      --marker-bg: #eef6d3;
+      --marker-border: #d2e49c;
+      --marker-text: #2c4212;
+      --timestamp-bg: #fef3c7;
+      --timestamp-text: #92400e;
+      --timestamp-border: #fde68a;
+      --modal-overlay: rgba(0, 0, 0, 0.45);
+      --code-bg: #eef3f1;
+    }
+
+    html.dark {
+      /* Dark / Black Mode Palette */
+      --bg-page: #0a0b0a;
+      --bg-surface: #131615;
+      --bg-surface-hover: #191d1c;
+      --bg-pill: #171b19;
+      --bg-pill-hover: #202623;
+      --bg-pill-active: #f3f7f5;
+      --text-pill-active: #0a0b0a;
+      --bg-banner: #13241f;
+      --text-banner: #a7f3d0;
+      --border-color: #242b28;
+      --border-subtle: #1c221f;
+      --text-primary: #f3f7f5;
+      --text-secondary: #b8ccc4;
+      --text-muted: #7b938a;
+      --accent-btn: #387563;
+      --accent-btn-hover: #458d78;
+      --accent-btn-text: #ffffff;
+      --input-bg: #131615;
+      --input-border: #242b28;
+      --card-border: #242b28;
+      --card-hover-border: #333d39;
+      --tag-collab-bg: #12281a;
+      --tag-collab-text: #34d399;
+      --tag-collab-border: #1b3d27;
+      --marker-bg: #4a3e1c;
+      --marker-border: rgba(245, 158, 11, 0.22);
+      --marker-text: #ffffff;
+      --timestamp-bg: #433716;
+      --timestamp-text: #fcd34d;
+      --timestamp-border: rgba(245, 158, 11, 0.35);
+      --modal-overlay: rgba(0, 0, 0, 0.75);
+      --code-bg: #0d0f0e;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Marker Highlight */
+    .marker-highlight {
+      background-color: var(--marker-bg);
+      color: var(--marker-text);
+      padding: 0.12em 0.45em;
+      border-radius: 9px;
+      display: inline-block;
+      transform: rotate(-1.1deg);
+      border: 1px solid var(--marker-border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Comment Timestamp Warm Amber Badge */
+    .timestamp-badge {
+      background-color: var(--timestamp-bg);
+      color: var(--timestamp-text);
+      padding: 1px 6px;
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      font-weight: 600;
+      display: inline-block;
+      border: 1px solid var(--timestamp-border);
+      margin: 0 2px;
+    }
+
+    /* Filter Pill Select in URL Scout */
+    .filter-pill-select {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 7px 32px 7px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236e857d'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+    }
+    .filter-pill-select:hover {
+      border-color: var(--card-hover-border);
+      background-color: var(--bg-surface-hover);
+    }
+
+    /* Filter Pill Buttons in Discover Sidebar */
+    .pill-btn {
+      background-color: var(--bg-pill);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pill-btn:hover {
+      border-color: var(--card-hover-border);
+      background-color: var(--bg-pill-hover);
+      color: var(--text-primary);
+    }
+    .pill-btn.active {
+      background-color: var(--bg-pill-active) !important;
+      color: var(--text-pill-active) !important;
+      border-color: var(--bg-pill-active) !important;
+      font-weight: 700;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-page);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- ========================================== -->
+  <!-- TOP NAVBAR                                 -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-40 transition-colors border-b" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Left: Logo & Mode Tabs -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <a href="#" class="font-bold text-xl tracking-tight flex items-center space-x-2.5" style="color: var(--text-primary);">
+          <img src="/logo.png" alt="CreatorScout" class="w-8 h-8 rounded-full shrink-0 shadow-sm object-cover">
+          <span>CreatorScout</span>
+        </a>
+        <span style="color: var(--border-color);">|</span>
+
+        <!-- Discover vs URL Scout Mode Switcher -->
+        <div class="flex items-center p-0.5 rounded-full border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+          <button id="navDiscoverBtn" class="px-3.5 py-1 rounded-full text-xs font-bold transition cursor-pointer" style="background-color: var(--bg-surface); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+            Discover
+          </button>
+          <button id="navScoutBtn" class="px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer" style="color: var(--text-muted);">
+            URL Scout
+          </button>
+        </div>
+
+        <button id="toggleApiSettingsBtn" class="text-xs font-medium transition flex items-center space-x-1 cursor-pointer ml-1" style="color: var(--text-muted);">
+          <span id="apiStatusBadge">API Key</span>
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </button>
+      </div>
+
+      <!-- Center: Navigation Links -->
+      <nav class="hidden lg:flex items-center space-x-1 text-xs font-medium">
+        <a href="#howItWorks" class="px-3 py-1.5 transition" style="color: var(--text-muted);">How It Works</a>
+        <a href="#whyTargetUS" class="px-3 py-1.5 transition" style="color: var(--text-muted);">Why Micro-Creators?</a>
+        <a href="#faqSection" class="px-3 py-1.5 transition" style="color: var(--text-muted);">FAQ</a>
+      </nav>
+
+      <!-- Right: Browsing As + Theme Toggle + Support & Upgrade -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        
+        <!-- Browsing as... + Theme Switcher (Matching Collyde) -->
+        <div class="hidden sm:flex items-center space-x-2 text-xs" style="color: var(--text-muted);">
+          <span class="text-[11px]">browsing as <strong style="color: var(--text-primary);" id="topBrowsingSizeLabel">1k – 10k</strong></span>
+        </div>
+
+        <!-- THEME TOGGLE BUTTON (Sun in Light Mode / Moon in Dark Mode) -->
+        <button 
+          id="themeToggleBtn" 
+          type="button" 
+          title="Toggle Light / Dark Mode" 
+          class="p-2 rounded-xl transition cursor-pointer flex items-center justify-center border"
+          style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);"
+        >
+          <span id="themeIconContainer">
+            <!-- Icon injected by JS -->
+          </span>
+        </button>
+
+        <button onclick="openModal('contactModal')" class="hidden md:flex text-xs font-medium transition items-center space-x-1.5 cursor-pointer" style="color: var(--text-muted);">
+          <svg class="w-3.5 h-3.5 text-[#e14b4b] fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span>Support</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- API KEY SETTINGS COLLAPSIBLE               -->
+  <!-- ========================================== -->
+  <div id="apiKeySection" class="hidden border-b py-4 transition-all" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+    <div class="max-w-3xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <div class="flex items-center space-x-2" style="color: var(--text-secondary);">
+        <svg class="w-4 h-4 text-[#f59e0b]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        <span>Enter Free YouTube Data API v3 Key (stored locally in browser):</span>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <input 
+          type="password" 
+          id="apiKeyInput" 
+          placeholder="Paste AIzaSy... key" 
+          class="text-xs px-3 py-1.5 rounded-lg w-full sm:w-64 font-mono focus:outline-none border"
+          style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"
+        >
+        <button id="saveApiKeyBtn" class="font-semibold text-xs px-3 py-1.5 rounded-lg transition shrink-0 cursor-pointer" style="background-color: var(--text-primary); color: var(--bg-surface);">
+          Save
+        </button>
+        <button id="clearApiKeyBtn" class="font-medium text-xs px-2.5 py-1.5 rounded-lg border transition shrink-0 cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);" title="Remove saved API key from storage">
+          Clear
+        </button>
+        <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" class="underline shrink-0 ml-1 flex items-center space-x-1" style="color: var(--text-muted);">
+          <span>Free Key</span>
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MAIN CONTENT CONTAINER                     -->
+  <!-- ========================================== -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: DISCOVER DIRECTORY (MATCHING COLLYDE INSPIRATION) -->
+    <!-- ======================================================== -->
+    <div id="discoverViewSection">
+      
+      <!-- Directory Hero Header -->
+      <div class="mb-6">
+        <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-2 border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
+          The Directory
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight" style="color: var(--text-primary);">
+          Discover
+        </h1>
+        <p class="text-sm mt-1.5 max-w-2xl leading-relaxed" style="color: var(--text-secondary);">
+          Bigger channels spin above the middle, smaller ones below, largest first &mdash; browse creators by niche and subscriber size direct from YouTube data.
+        </p>
+      </div>
+
+      <!-- Subtle Collyde-style Banner -->
+      <div class="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 transition border" style="background-color: var(--bg-banner); color: var(--text-banner); border-color: var(--border-color);">
+        <div class="text-xs sm:text-sm font-medium leading-relaxed">
+          You are browsing as a <strong id="bannerBrowsingSize">1k – 10k creator</strong>. Verify your channel to pin it in the middle and see who is actually reachable for you.
+        </div>
+        <button onclick="openModal('proModal')" class="text-xs font-bold underline shrink-0 hover:opacity-80 transition cursor-pointer">
+          Verify &mdash; 60 seconds
+        </button>
+      </div>
+
+      <!-- Main Directory Layout: Left Sidebar Filters + Right Channels Feed -->
+      <div class="flex flex-col lg:flex-row gap-8 items-start">
+        
+        <!-- LEFT SIDEBAR: FILTERS -->
+        <aside class="w-full lg:w-72 shrink-0 rounded-2xl p-5 space-y-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          
+          <!-- Search input -->
+          <div>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="dirSearchInput" 
+                placeholder="Search channels, handles, niche..." 
+                class="w-full pl-9 pr-3 py-2 text-xs rounded-xl focus:outline-none border transition"
+                style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"
+              >
+              <svg class="w-4 h-4 absolute left-3 top-2.5" style="color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+          </div>
+
+          <!-- Filter Section: SIZE -->
+          <div>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Size (Subscribers)</h4>
+            <div class="flex flex-wrap gap-1.5" id="sizePillGroup">
+              <button type="button" class="pill-btn" data-min="0" data-max="1000000000">All</button>
+              <button type="button" class="pill-btn" data-min="0" data-max="1000">0 – 1k</button>
+              <button type="button" class="pill-btn active" data-min="1000" data-max="10000">1k – 10k</button>
+              <button type="button" class="pill-btn" data-min="10000" data-max="100000">10k – 100k</button>
+              <button type="button" class="pill-btn" data-min="100000" data-max="500000">100k – 500k</button>
+              <button type="button" class="pill-btn" data-min="500000" data-max="2000000">500k – 2M</button>
+              <button type="button" class="pill-btn" data-min="2000000" data-max="10000000">2M – 10M</button>
+              <button type="button" class="pill-btn" data-min="10000000" data-max="1000000000">10M+</button>
+            </div>
+          </div>
+
+          <!-- Filter Section: NICHE -->
+          <div>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Niche</h4>
+            <div class="flex flex-wrap gap-1.5" id="nichePillGroup">
+              <button type="button" class="pill-btn" data-niche="All">All</button>
+              <button type="button" class="pill-btn active" data-niche="Tech">Tech</button>
+              <button type="button" class="pill-btn" data-niche="Gaming">Gaming</button>
+              <button type="button" class="pill-btn" data-niche="Maker & DIY">Maker & DIY</button>
+              <button type="button" class="pill-btn" data-niche="Film & VFX">Film & VFX</button>
+              <button type="button" class="pill-btn" data-niche="Music">Music</button>
+              <button type="button" class="pill-btn" data-niche="Cooking">Cooking</button>
+              <button type="button" class="pill-btn" data-niche="Fitness">Fitness</button>
+              <button type="button" class="pill-btn" data-niche="Finance">Finance</button>
+              <button type="button" class="pill-btn" data-niche="Science">Science</button>
+              <button type="button" class="pill-btn" data-niche="Education">Education</button>
+              <button type="button" class="pill-btn" data-niche="Travel">Travel</button>
+              <button type="button" class="pill-btn" data-niche="Beauty">Beauty</button>
+            </div>
+          </div>
+
+          <!-- Filter Section: LOOKING FOR -->
+          <div>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Looking For</h4>
+            <div class="flex flex-wrap gap-1.5" id="collabPillGroup">
+              <button type="button" class="pill-btn active">All Collabs</button>
+              <button type="button" class="pill-btn">Cross-promo</button>
+              <button type="button" class="pill-btn">Guest spot</button>
+              <button type="button" class="pill-btn">Podcast guest</button>
+              <button type="button" class="pill-btn">Shorts collab</button>
+            </div>
+          </div>
+
+          <!-- Filter Section: REGION (Categorized High CPM / RPM Countries) -->
+          <div id="regionPillGroup" class="space-y-3 pt-1">
+            <div class="flex items-center justify-between">
+              <h4 class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--text-muted);">Region</h4>
+              <button type="button" class="pill-btn text-[11px] px-2.5 py-1" data-country="ANY">🌐 All (Global)</button>
+            </div>
+
+            <!-- North America -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🌎 North America</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn active" data-country="US">US 🇺🇸</button>
+                <button type="button" class="pill-btn" data-country="CA">CA 🇨🇦</button>
+              </div>
+            </div>
+
+            <!-- Europe -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🌍 Europe</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="GB">UK 🇬🇧</button>
+                <button type="button" class="pill-btn" data-country="DE">DE 🇩🇪</button>
+                <button type="button" class="pill-btn" data-country="NO">NO 🇳🇴</button>
+                <button type="button" class="pill-btn" data-country="CH">CH 🇨🇭</button>
+                <button type="button" class="pill-btn" data-country="NL">NL 🇳🇱</button>
+                <button type="button" class="pill-btn" data-country="IE">IE 🇮🇪</button>
+                <button type="button" class="pill-btn" data-country="AT">AT 🇦🇹</button>
+                <button type="button" class="pill-btn" data-country="FR">FR 🇫🇷</button>
+                <button type="button" class="pill-btn" data-country="FI">FI 🇫🇮</button>
+                <button type="button" class="pill-btn" data-country="SE">SE 🇸🇪</button>
+              </div>
+            </div>
+
+            <!-- Asia -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🌏 Asia</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="SG">SG 🇸🇬</button>
+                <button type="button" class="pill-btn" data-country="AE">AE 🇦🇪</button>
+                <button type="button" class="pill-btn" data-country="JP">JP 🇯🇵</button>
+              </div>
+            </div>
+
+            <!-- Oceania -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🦘 Oceania</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="AU">AU 🇦🇺</button>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- RIGHT MAIN FEED: CREATOR DIRECTORY CARDS -->
+        <div class="flex-1 w-full space-y-4">
+          
+          <!-- Filter status bar -->
+          <div class="flex items-center justify-between pb-2 border-b text-xs transition" style="border-color: var(--border-color); color: var(--text-secondary);">
+            <div>
+              Showing <b id="dirCountDisplay" style="color: var(--text-primary);">0</b> creators in <span id="dirActiveNicheLabel" class="font-semibold text-[#f59e0b]">Tech</span> (<span id="dirActiveSizeLabel">1k – 10k</span>)
+            </div>
+            <div class="flex items-center space-x-2">
+              <span style="color: var(--text-muted);">Order:</span>
+              <span class="font-medium" style="color: var(--text-primary);">Relevance</span>
+            </div>
+          </div>
+
+          <!-- Loading indicator -->
+          <div id="dirLoadingIndicator" class="hidden text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-7 w-7 border-2 border-t-transparent mb-2" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
+            <p class="text-xs" style="color: var(--text-muted);">Fetching creators from YouTube...</p>
+          </div>
+
+          <!-- Channel Cards Container (Matching Collyde with [Visit] button) -->
+          <div id="dirCardsContainer" class="space-y-3">
+            <!-- Dynamically populated channel cards -->
+          </div>
+
+          <!-- Load More Button -->
+          <div id="dirLoadMoreContainer" class="mt-6 text-center hidden">
+            <button id="dirLoadMoreBtn" type="button" class="px-6 py-2.5 rounded-xl font-bold text-xs transition border cursor-pointer inline-flex items-center space-x-2" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary);">
+              <span id="dirLoadMoreText">Load more creators</span>
+              <div id="dirLoadMoreSpinner" class="hidden animate-spin rounded-full h-3.5 w-3.5 border-2 border-t-transparent" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
+              <svg id="dirLoadMoreIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: URL SCOUT (THE VIDEO COMMENT SCANNER TOOL)       -->
+    <!-- ======================================================== -->
+    <div id="scoutViewSection" class="hidden">
+      
+      <!-- HERO SECTION -->
+      <div class="text-center pt-4 pb-6 max-w-3xl mx-auto">
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight" style="color: var(--text-primary);">
+          Find YouTube <span class="marker-highlight">US/UK creators</span>
+        </h2>
+        <p class="mt-4 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed" style="color: var(--text-secondary);">
+          Paste a video link to load its comment thread, filter active Tier-1 micro-creators by recent uploads, extract timestamp hooks, and copy @mentions.
+        </p>
+      </div>
+
+      <!-- SEARCH ROW -->
+      <div id="toolSection" class="max-w-2xl mx-auto mb-5 scroll-mt-24">
+        <div class="rounded-2xl p-1.5 flex flex-col sm:flex-row items-center gap-2 transition border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="relative flex-1 w-full flex items-center pl-2">
+            <input 
+              type="text" 
+              id="videoUrlInput" 
+              placeholder="https://www.youtube.com/watch?v=..." 
+              value="https://youtu.be/38euDbuxkQY"
+              class="w-full bg-transparent px-3 py-2 text-sm focus:outline-none"
+              style="color: var(--text-primary);"
+            >
+            <button id="pasteBtn" type="button" class="mr-2 text-xs font-medium px-3 py-1.5 rounded-xl border transition flex items-center space-x-1.5 shrink-0 cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-secondary);">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              <span>Paste</span>
+            </button>
+          </div>
+          <button 
+            id="searchBtn" 
+            type="button" 
+            class="w-full sm:w-auto font-bold text-sm px-6 py-3 rounded-xl transition shrink-0 cursor-pointer shadow-xs"
+            style="background-color: var(--accent-btn); color: var(--accent-btn-text);"
+          >
+            Load creators
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 FLAT PILL DROPDOWNS -->
+      <div class="max-w-2xl mx-auto mb-8 flex flex-wrap items-center justify-center gap-2.5">
+        <select id="targetCountryInput" class="filter-pill-select">
+          <option value="TIER1" selected>Country: US & UK</option>
+          <option value="US">Country: US Only</option>
+          <option value="GB">Country: UK Only</option>
+          <option value="CA">Country: Canada</option>
+          <option value="AU">Country: Australia</option>
+          <option value="DE">Country: Germany</option>
+          <option value="ANY">Country: Any / Global</option>
+        </select>
+
+        <select id="maxSubsInput" class="filter-pill-select">
+          <option value="5000">Subs: Under 5K</option>
+          <option value="10000" selected>Subs: Under 10K</option>
+          <option value="25000">Subs: Under 25K</option>
+          <option value="50000">Subs: Under 50K</option>
+          <option value="100000">Subs: Under 100K</option>
+        </select>
+
+        <select id="activeDaysInput" class="filter-pill-select">
+          <option value="30" selected>Activity: Last 30 days</option>
+          <option value="60">Activity: Last 60 days</option>
+          <option value="90">Activity: Last 90 days</option>
+          <option value="180">Activity: Last 6 months</option>
+          <option value="any">Activity: Any time</option>
+        </select>
+
+        <button id="downloadCsvBtn" class="filter-pill-select flex items-center space-x-1.5 cursor-pointer">
+          <span>Export CSV</span>
+        </button>
+
+        <button id="toggleMoreFiltersBtn" class="text-[12px] transition underline ml-1 cursor-pointer" style="color: var(--text-muted);">
+          Options
+        </button>
+      </div>
+
+      <!-- Hidden Advanced Controls -->
+      <div id="moreFiltersSection" class="hidden max-w-2xl mx-auto mb-8 p-4 rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+        <div>
+          <label class="block font-medium mb-1" style="color: var(--text-muted);">Country Check Level</label>
+          <select id="countryFilterModeInput" class="w-full rounded-xl px-2.5 py-1.5 border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+            <option value="strict" selected>Strict: YouTube Official</option>
+            <option value="include_bio">Strict + Bio Mentions</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium mb-1" style="color: var(--text-muted);">Min Subscribers</label>
+          <select id="minSubsInput" class="w-full rounded-xl px-2.5 py-1.5 border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+            <option value="1">At least 1 Sub</option>
+            <option value="5" selected>At least 5 Subs</option>
+            <option value="50">At least 50 Subs</option>
+            <option value="100">At least 100 Subs</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium mb-1" style="color: var(--text-muted);">Min Uploaded Videos</label>
+          <select id="minVideosInput" class="w-full rounded-xl px-2.5 py-1.5 border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+            <option value="1" selected>At least 1 Video (Creator)</option>
+            <option value="3">At least 3 Videos</option>
+            <option value="5">At least 5 Videos</option>
+            <option value="0">Any</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div id="loadingState" class="hidden text-center py-16">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-t-transparent mb-3" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
+        <p class="font-bold text-base" style="color: var(--text-primary);">Loading comments & checking creators...</p>
+        <p class="text-xs mt-1" style="color: var(--text-muted);">Filtering active uploaders and verifying location...</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="errorState" class="hidden max-w-2xl mx-auto mb-8 rounded-2xl p-4 text-xs flex items-start space-x-3 border bg-red-500/10 border-red-500/30 text-red-400">
+        <svg class="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <div>
+          <h4 class="font-bold text-sm text-red-300">Error</h4>
+          <p id="errorMessage" class="mt-0.5 text-zinc-300"></p>
+        </div>
+      </div>
+
+      <!-- RESULTS SECTION -->
+      <div id="resultsSection" class="hidden space-y-6 mb-8">
+        
+        <div class="rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div>
+            <h2 id="videoTitleDisplay" class="font-bold text-base truncate max-w-xl" style="color: var(--text-primary);">Video Title</h2>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs mt-1" style="color: var(--text-muted);">
+              <span>Scanned: <b id="commentsScannedCount" style="color: var(--text-primary);">0</b> comments</span>
+              <span>&bull;</span>
+              <span>Analyzed: <b id="channelsAnalyzedCount" style="color: var(--text-primary);">0</b> channels</span>
+              <span>&bull;</span>
+              <span class="text-[#f59e0b] font-semibold">Found: <span id="creatorsFoundCount">0</span> <span id="foundRegionLabel">creators</span></span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <button id="copyAllMentionsBtn" class="text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">
+              Copy All Mentions
+            </button>
+          </div>
+        </div>
+
+        <div class="rounded-2xl p-4 text-xs flex items-start space-x-3 border" style="background-color: var(--bg-banner); border-color: var(--border-color); color: var(--text-banner);">
+          <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <div class="leading-relaxed">
+            <strong class="font-semibold">YouTube Safety Tip:</strong> 
+            Avoid mass-mentioning 20–30 handles at once to prevent YouTube spam flags or shadowbans. The safest practice is to feature a maximum of <strong>5 to 7 creators</strong> in your video description, and use <strong>"Safe Batches"</strong> (3–5 handles per comment) or each card's <strong>"Copy @mention"</strong> button across separate comments.
+          </div>
+        </div>
+
+        <!-- Safe Description Shoutout Generator -->
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <div>
+              <h3 class="font-bold text-sm" style="color: var(--text-primary);">Safe Video Description Formatter (Break 0 Views)</h3>
+              <p class="text-xs" style="color: var(--text-muted);">Paste this block at the bottom of your video description to safely notify creators.</p>
+            </div>
+            <div class="flex items-center space-x-2 text-xs">
+              <select id="descCountSelect" class="rounded-lg px-2 py-1 border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+                <option value="5" selected>Top 5 Creators (Safest)</option>
+                <option value="7">Top 7 Creators</option>
+                <option value="10">Top 10 Creators</option>
+              </select>
+              <select id="descStyleSelect" class="rounded-lg px-2 py-1 border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+                <option value="shoutout" selected>Community Shoutout</option>
+                <option value="credits">Inspiration & Credits</option>
+                <option value="minimal">Minimal Tags</option>
+              </select>
+            </div>
+          </div>
+          <div class="relative">
+            <textarea 
+              id="descFormattedTextArea" 
+              rows="3" 
+              readonly 
+              class="w-full font-mono text-xs p-3.5 pr-36 rounded-xl focus:outline-none border"
+              style="background-color: var(--code-bg); border-color: var(--border-color); color: var(--text-primary);"
+              placeholder="Shoutout to fellow creators: @c1 @c2 ..."
+            ></textarea>
+            <button 
+              id="copyDescBtn" 
+              type="button" 
+              class="absolute top-2.5 right-2.5 font-semibold text-xs px-3 py-1.5 rounded-lg transition cursor-pointer"
+              style="background-color: var(--accent-btn); color: var(--accent-btn-text);"
+            >
+              Copy Description
+            </button>
+          </div>
+        </div>
+
+        <!-- Safe Mention Batches -->
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <div>
+              <h3 class="font-bold text-sm" style="color: var(--text-primary);">Safe Mention Batches (3-5 Per Comment)</h3>
+              <p class="text-xs" style="color: var(--text-muted);">Post each batch in a separate comment so YouTube never flags mass-mentions.</p>
+            </div>
+            <div class="flex items-center space-x-2 text-xs">
+              <button id="batchSize3Btn" class="pill-btn">3 Handles</button>
+              <button id="batchSize5Btn" class="pill-btn active">5 Handles (Recommended)</button>
+            </div>
+          </div>
+          <div id="safeBatchesContainer" class="space-y-2"></div>
+        </div>
+
+        <!-- Retention Hooks & Timestamps -->
+        <div id="timestampsSection" class="hidden rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <h3 class="font-bold text-sm mb-1" style="color: var(--text-primary);">Retention Hooks & Timestamps</h3>
+          <p class="text-xs mb-3" style="color: var(--text-muted);">Verified timestamps from comments (false-positives eliminated). Click to copy.</p>
+          <div id="timestampsList" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Raw Mentions Box -->
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-bold" style="color: var(--text-primary);">Raw Mention List:</label>
+            <div class="flex items-center space-x-2 text-xs">
+              <button id="formatSpaceBtn" class="pill-btn active">Space-separated</button>
+              <button id="formatNewlineBtn" class="pill-btn">Line-by-line</button>
+            </div>
+          </div>
+          <textarea 
+            id="mentionsTextArea" 
+            rows="3" 
+            readonly 
+            class="w-full font-mono text-xs p-3.5 rounded-xl focus:outline-none border"
+            style="background-color: var(--code-bg); border-color: var(--border-color); color: var(--text-primary);"
+            placeholder="@creator1 @creator2 ..."
+          ></textarea>
+        </div>
+
+      </div>
+
+      <!-- 4-Column Cards Grid for URL Scout -->
+      <div class="mb-16">
+        <div class="flex items-center justify-between mb-3.5 px-1">
+          <h3 class="font-bold text-sm" style="color: var(--text-primary);">
+            Scouted Creators (<span id="creatorsListHeaderCount">4</span>)
+          </h3>
+          <span class="text-xs" style="color: var(--text-muted);">Tier-1 micro-creators & verified timestamps</span>
+        </div>
+        <div id="creatorsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Dynamically populated or demo cards -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. HOW IT WORKS SECTION                    -->
+    <!-- ========================================== -->
+    <section id="howItWorks" class="mt-20 pt-12 border-t scroll-mt-24" style="border-color: var(--border-color);">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-2xl md:text-3xl font-extrabold mb-3" style="color: var(--text-primary);">How CreatorScout Works</h2>
+        <p class="text-sm" style="color: var(--text-secondary);">Two powerful modes to discover and connect with active Tier-1 micro-creators.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="rounded-2xl p-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="w-9 h-9 rounded-xl font-extrabold flex items-center justify-center text-sm mb-4 border" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">1</div>
+          <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Niche Directory (Discover)</h3>
+          <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+            No video link needed. Select your niche (Tech, Gaming, Finance, etc.) and subscriber range (1k – 10k) to browse channels directly with 1-click <code>[Visit]</code> buttons.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="w-9 h-9 rounded-xl font-extrabold flex items-center justify-center text-sm mb-4 border" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">2</div>
+          <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Video Scout (URL)</h3>
+          <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+            Paste any viral video in your niche to extract commenting micro-creators, verified retention timestamp hooks, and safe description shoutouts.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="w-9 h-9 rounded-xl font-extrabold flex items-center justify-center text-sm mb-4 border" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">3</div>
+          <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">1-Click Visit & Mentions</h3>
+          <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+            Instantly visit creator channels to engage, copy safe <code>@mention</code> batches for video descriptions, or export formula-safe CSV spreadsheets.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. WHY MICRO-CREATORS SECTION              -->
+    <!-- ========================================== -->
+    <section id="whyTargetUS" class="mt-20 max-w-5xl mx-auto rounded-3xl p-8 md:p-12 scroll-mt-24 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <div class="max-w-3xl">
+        <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-3 border" style="background-color: var(--bg-banner); color: var(--text-banner); border-color: var(--border-color);">High Retention & CPM Strategy</span>
+        <h2 class="text-2xl md:text-4xl font-extrabold mt-2 mb-4" style="color: var(--text-primary);">Why Partner with US/UK Micro-Creators?</h2>
+        <p class="text-sm leading-relaxed mb-8" style="color: var(--text-secondary);">
+          Micro-creators (channels with 1,000 to 10,000 subscribers) have an average engagement rate <strong style="color: var(--text-primary);">60% higher</strong> than mega channels. They actively read every comment, appreciate authentic shoutouts, and bring genuine Tier-1 viewers with high purchasing power.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Break 0-Views Algorithm:</strong> Getting initial views and replies from fellow creators triggers the YouTube recommendation engine.</span>
+          </div>
+          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Higher Reply Rates:</strong> Little creators check their Studio notifications daily and reciprocate genuine engagement.</span>
+          </div>
+          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">High CPM Markets:</strong> US, UK, and Canadian viewership increases your channel's ad revenue potential ($15-$40 CPM).</span>
+          </div>
+          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Active Uploaders Only:</strong> Our tool automatically filters out inactive or abandoned channels so your shoutouts don't go to waste.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. FAQ SECTION                             -->
+    <!-- ========================================== -->
+    <section id="faqSection" class="mt-20 max-w-4xl mx-auto mb-16 scroll-mt-24">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <h2 class="text-2xl md:text-3xl font-extrabold mb-2" style="color: var(--text-primary);">Frequently Asked Questions</h2>
+        <p class="text-sm" style="color: var(--text-secondary);">Everything you need to know about YouTube creator discovery, safety guidelines, and data accuracy.</p>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <h4 class="font-bold text-sm mb-1.5" style="color: var(--text-primary);">How does Discover mode find channels without a video link?</h4>
+          <p class="leading-relaxed" style="color: var(--text-secondary);">
+            In Discover mode, our engine queries YouTube Data API directly for active channels categorized under your selected niche (Tech, Gaming, Cooking, etc.) and filters them by your chosen subscriber thresholds (e.g. 1k – 10k) and country.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <h4 class="font-bold text-sm mb-1.5" style="color: var(--text-primary);">What does the [Visit] button do?</h4>
+          <p class="leading-relaxed" style="color: var(--text-secondary);">
+            Clicking <code>[Visit]</code> directly opens the creator's official YouTube channel in a new tab so you can immediately view their latest videos, comment, or subscribe.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <h4 class="font-bold text-sm mb-1.5" style="color: var(--text-primary);">How can I be sure the creator is actually from the US or UK?</h4>
+          <p class="leading-relaxed" style="color: var(--text-secondary);">
+            Our tool directly checks the official <code>country</code> field registered in YouTube Studio by the channel owner. In Strict Mode, only channels officially verified in the US, UK, Canada, Australia, or Germany are returned.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <h4 class="font-bold text-sm mb-1.5" style="color: var(--text-primary);">How do I safely mention creators without getting spam penalties?</h4>
+          <p class="leading-relaxed" style="color: var(--text-secondary);">
+            Never paste 30-40 handles in a single comment. Use our "Safe Description Shoutout" box (limiting to 5-7 creators per video) or "Safe Batches" (3-5 handles per comment) so YouTube never flags your account as spam.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- FOOTER                                     -->
+  <!-- ========================================== -->
+  <footer class="border-t py-8 text-xs transition" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-muted);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold" style="color: var(--text-primary);">CreatorScout</span>
+        <span>&bull;</span>
+        <span>Minimalist Tier-1 YouTube Creator Discovery</span>
+      </div>
+      <div class="flex items-center space-x-5" style="color: var(--text-secondary);">
+        <button onclick="openModal('privacyModal')" class="hover:underline transition cursor-pointer">Privacy Policy</button>
+        <button onclick="openModal('termsModal')" class="hover:underline transition cursor-pointer">Terms of Service</button>
+        <button onclick="openModal('aboutModal')" class="hover:underline transition cursor-pointer">About</button>
+        <button onclick="openModal('contactModal')" class="hover:underline transition cursor-pointer">Contact</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MODALS (PRO, PRIVACY, TERMS, ABOUT, CONTACT)-->
+  <!-- ========================================== -->
+
+  <!-- Pro Modal -->
+  <div id="proModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-md w-full p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('proModal')" class="absolute top-4 right-4 text-lg cursor-pointer" style="color: var(--text-muted);">&times;</button>
+      <div class="inline-block px-2.5 py-1 rounded-full text-[11px] font-bold mb-3 border" style="background-color: var(--bg-pill); color: #f59e0b; border-color: var(--border-color);">CreatorScout Pro</div>
+      <h3 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">Unlock Unlimited Growth</h3>
+      <p class="text-xs mb-5" style="color: var(--text-secondary);">Designed for YouTubers, agencies, and brands targeting US/UK micro-creators.</p>
+      
+      <div class="space-y-2.5 text-xs mb-6" style="color: var(--text-secondary);">
+        <div class="flex items-center space-x-2.5">
+          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span>Unlimited video searches with no daily quota limits</span>
+        </div>
+        <div class="flex items-center space-x-2.5">
+          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span>Direct Business Email extraction from channel bios</span>
+        </div>
+        <div class="flex items-center space-x-2.5">
+          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span>Auto-categorization (Gaming, Tech, Vlog, Lifestyle)</span>
+        </div>
+        <div class="flex items-center space-x-2.5">
+          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span>Ad-Free high-speed interface</span>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl mb-5 flex items-baseline justify-between border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+        <div>
+          <div class="text-2xl font-extrabold" style="color: var(--text-primary);">$19 <span class="text-xs font-normal" style="color: var(--text-muted);">/ month</span></div>
+          <div class="text-[11px]" style="color: var(--text-muted);">Cancel anytime. 7-day money-back guarantee.</div>
+        </div>
+        <span class="text-xs font-semibold text-emerald-500">Instant Access</span>
+      </div>
+
+      <button onclick="alert('Payment gateway integration available when domain is connected via LemonSqueezy/Stripe.'); closeModal('proModal');" class="w-full bg-[#e14b4b] hover:bg-[#cf3e3e] text-white font-bold py-3 rounded-xl transition text-sm cursor-pointer">
+        Upgrade Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Modal -->
+  <div id="privacyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('privacyModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-lg font-bold mb-3" style="color: var(--text-primary);">Privacy Policy</h2>
+      <div class="text-xs space-y-2.5 leading-relaxed" style="color: var(--text-secondary);">
+        <p>CreatorScout uses official YouTube Data API v3 endpoints. Any API Key entered is stored locally on your device via HTML5 LocalStorage and never stored on third-party servers.</p>
+        <p>By using this tool, you agree to YouTube Terms of Service and Google Privacy Policy.</p>
+      </div>
+      <div class="mt-5 text-right">
+        <button onclick="closeModal('privacyModal')" class="text-xs font-semibold px-4 py-2 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms Modal -->
+  <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('termsModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-lg font-bold mb-3" style="color: var(--text-primary);">Terms of Service</h2>
+      <div class="text-xs space-y-2.5 leading-relaxed" style="color: var(--text-secondary);">
+        <p>CreatorScout is an analytical utility for content creators. All data presented is fetched via publicly available YouTube channels and comments.</p>
+        <p>Users are responsible for complying with YouTube's Community Guidelines and anti-spam policies when reaching out to creators.</p>
+      </div>
+      <div class="mt-5 text-right">
+        <button onclick="closeModal('termsModal')" class="text-xs font-semibold px-4 py-2 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-lg w-full p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-lg font-bold mb-2" style="color: var(--text-primary);">About CreatorScout</h2>
+      <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+        CreatorScout is an independent creator discovery engine designed to help emerging YouTubers break out of the 0-views algorithmic flatline through genuine niche collaborations and targeted US/UK micro-influencer outreach.
+      </p>
+      <div class="mt-5 text-right">
+        <button onclick="closeModal('aboutModal')" class="text-xs font-semibold px-4 py-2 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div id="contactModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-lg w-full p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('contactModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-lg font-bold mb-1" style="color: var(--text-primary);">Contact & Support</h2>
+      <p class="text-xs mb-4" style="color: var(--text-muted);">Send us feedback, feature requests, or partnership inquiries.</p>
+      <form onsubmit="event.preventDefault(); alert('Thank you! Your message has been received.'); closeModal('contactModal');" class="space-y-3 text-xs">
+        <input type="text" required placeholder="Your Name" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+        <input type="email" required placeholder="Your Email" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+        <textarea rows="3" required placeholder="How can we assist you?" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"></textarea>
+        <button type="submit" class="w-full bg-[#e14b4b] hover:bg-[#cf3e3e] text-white font-bold py-2.5 rounded-xl transition cursor-pointer">
+          Send Message
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-200 z-50 border" style="background-color: var(--text-primary); color: var(--bg-surface); border-color: var(--border-color);">
+    Copied to clipboard
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT CONTROLLER                      -->
+  <!-- ========================================== -->
+  <script>
+    // ==========================================
+    // 1. THEME SWITCHER (SUN / MOON DYNAMIC)
+    // ==========================================
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIconContainer = document.getElementById('themeIconContainer');
+
+    // Sun SVG Icon (shown in Light Mode to switch to Dark)
+    const SUN_ICON = `
+      <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="M4.93 4.93l1.41 1.41"></path>
+        <path d="M17.66 17.66l1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="M6.34 17.66l-1.41 1.41"></path>
+        <path d="M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+    `;
+
+    // Moon SVG Icon (shown in Dark/Black Mode to switch to Light)
+    const MOON_ICON = `
+      <svg class="w-4 h-4 text-zinc-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    `;
+
+    function getSavedTheme() {
+      try {
+        return localStorage.getItem('creatorscout_theme') || 'dark';
+      } catch (e) {
+        return 'dark';
+      }
+    }
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        themeIconContainer.innerHTML = MOON_ICON;
+        themeToggleBtn.title = 'Switch to Light Mode';
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeIconContainer.innerHTML = SUN_ICON;
+        themeToggleBtn.title = 'Switch to Dark Mode';
+      }
+      try {
+        localStorage.setItem('creatorscout_theme', theme);
+      } catch (e) {}
+    }
+
+    // Toggle click handler
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    });
+
+    // Initialize Theme on startup
+    applyTheme(getSavedTheme());
+
+    // ==========================================
+    // 2. DISCOVER DIRECTORY & VIEW SWITCHER
+    // ==========================================
+    const navDiscoverBtn = document.getElementById('navDiscoverBtn');
+    const navScoutBtn = document.getElementById('navScoutBtn');
+    const discoverViewSection = document.getElementById('discoverViewSection');
+    const scoutViewSection = document.getElementById('scoutViewSection');
+
+    function switchView(view) {
+      if (view === 'discover') {
+        discoverViewSection.classList.remove('hidden');
+        scoutViewSection.classList.add('hidden');
+        navDiscoverBtn.style.backgroundColor = 'var(--bg-surface)';
+        navDiscoverBtn.style.color = 'var(--text-primary)';
+        navDiscoverBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+        navDiscoverBtn.style.fontWeight = '700';
+
+        navScoutBtn.style.backgroundColor = 'transparent';
+        navScoutBtn.style.color = 'var(--text-muted)';
+        navScoutBtn.style.boxShadow = 'none';
+        navScoutBtn.style.fontWeight = '500';
+        loadDiscoverChannels();
+      } else {
+        discoverViewSection.classList.add('hidden');
+        scoutViewSection.classList.remove('hidden');
+        navScoutBtn.style.backgroundColor = 'var(--bg-surface)';
+        navScoutBtn.style.color = 'var(--text-primary)';
+        navScoutBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+        navScoutBtn.style.fontWeight = '700';
+
+        navDiscoverBtn.style.backgroundColor = 'transparent';
+        navDiscoverBtn.style.color = 'var(--text-muted)';
+        navDiscoverBtn.style.boxShadow = 'none';
+        navDiscoverBtn.style.fontWeight = '500';
+      }
+    }
+
+    navDiscoverBtn.addEventListener('click', () => switchView('discover'));
+    navScoutBtn.addEventListener('click', () => switchView('scout'));
+
+    // Discover State Variables
+    let currentNiche = 'Tech';
+    let currentMinSubs = 1000;
+    let currentMaxSubs = 10000;
+    let currentCountry = 'US';
+    let currentQuery = '';
+
+    const dirSearchInput = document.getElementById('dirSearchInput');
+    const dirCountDisplay = document.getElementById('dirCountDisplay');
+    const dirActiveNicheLabel = document.getElementById('dirActiveNicheLabel');
+    const dirActiveSizeLabel = document.getElementById('dirActiveSizeLabel');
+    const topBrowsingSizeLabel = document.getElementById('topBrowsingSizeLabel');
+    const bannerBrowsingSize = document.getElementById('bannerBrowsingSize');
+    const dirLoadingIndicator = document.getElementById('dirLoadingIndicator');
+    const dirCardsContainer = document.getElementById('dirCardsContainer');
+    const dirLoadMoreContainer = document.getElementById('dirLoadMoreContainer');
+    const dirLoadMoreBtn = document.getElementById('dirLoadMoreBtn');
+    const dirLoadMoreText = document.getElementById('dirLoadMoreText');
+    const dirLoadMoreSpinner = document.getElementById('dirLoadMoreSpinner');
+    const dirLoadMoreIcon = document.getElementById('dirLoadMoreIcon');
+
+    let currentNextPageToken = null;
+    let isDirLoading = false;
+    const seenChannelKeys = new Set();
+
+    // Avatar Color Palette
+    const AVATAR_PALETTE = [
+      { bg: '#3e2d21', text: '#d97706' },
+      { bg: '#1f3925', text: '#34d399' },
+      { bg: '#1e2f44', text: '#60a5fa' },
+      { bg: '#1e3538', text: '#2dd4bf' },
+      { bg: '#2b2938', text: '#c084fc' },
+      { bg: '#38222b', text: '#f472b6' }
+    ];
+
+    // Discover Pill Click Handlers
+    document.getElementById('sizePillGroup').addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
+      document.querySelectorAll('#sizePillGroup .pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMinSubs = parseInt(btn.dataset.min, 10);
+      currentMaxSubs = parseInt(btn.dataset.max, 10);
+      dirActiveSizeLabel.textContent = btn.textContent;
+      topBrowsingSizeLabel.textContent = btn.textContent;
+      bannerBrowsingSize.textContent = btn.textContent + ' creator';
+      loadDiscoverChannels();
+    });
+
+    document.getElementById('nichePillGroup').addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
+      document.querySelectorAll('#nichePillGroup .pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentNiche = btn.dataset.niche;
+      dirActiveNicheLabel.textContent = currentNiche;
+      loadDiscoverChannels();
+    });
+
+    document.getElementById('collabPillGroup').addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
+      document.querySelectorAll('#collabPillGroup .pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+
+    document.getElementById('regionPillGroup').addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
+      document.querySelectorAll('#regionPillGroup .pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCountry = btn.dataset.country;
+      loadDiscoverChannels();
+    });
+
+    let searchDebounceTimer = null;
+    dirSearchInput.addEventListener('input', () => {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        currentQuery = dirSearchInput.value.trim();
+        loadDiscoverChannels();
+      }, 350);
+    });
+
+    // Helper to resolve API endpoints whether running via localhost:3000, file://, or live server
+    function getApiEndpoint(endpoint) {
+      if (window.location.protocol === 'file:' || (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.hostname.includes('render') && !window.location.hostname.includes('vercel'))) {
+        return 'http://localhost:3000' + endpoint;
+      }
+      return endpoint;
+    }
+
+    // Fetch Discover Channels from Backend (Supports Initial Fetch & Pagination)
+    async function loadDiscoverChannels(isLoadMore = false) {
+      if (isDirLoading) return;
+      isDirLoading = true;
+
+      let apiKey = '';
+      try {
+        apiKey = localStorage.getItem('yt_data_api_key') || '';
+      } catch (e) {}
+
+      if (!isLoadMore) {
+        seenChannelKeys.clear();
+        currentNextPageToken = null;
+        dirCardsContainer.innerHTML = '';
+        dirLoadingIndicator.classList.remove('hidden');
+        dirLoadMoreContainer.classList.add('hidden');
+      } else {
+        dirLoadMoreSpinner.classList.remove('hidden');
+        dirLoadMoreIcon.classList.add('hidden');
+        dirLoadMoreText.textContent = 'Loading more creators...';
+        dirLoadMoreBtn.disabled = true;
+      }
+
+      try {
+        const res = await fetch(getApiEndpoint('/api/discover'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            niche: currentNiche,
+            minSubs: currentMinSubs,
+            maxSubs: currentMaxSubs,
+            country: currentCountry,
+            query: currentQuery,
+            apiKey: apiKey,
+            pageToken: isLoadMore ? (currentNextPageToken || '') : ''
+          })
+        });
+
+        const data = await res.json();
+        const channels = data.channels || [];
+        currentNextPageToken = data.nextPageToken || null;
+
+        if (!isLoadMore && channels.length === 0) {
+          dirCardsContainer.innerHTML = `
+            <div class="rounded-2xl p-8 text-center border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+              <p class="text-sm font-semibold" style="color: var(--text-primary);">No channels found in this exact filter.</p>
+              <p class="text-xs mt-1" style="color: var(--text-muted);">Try expanding the subscriber size or choosing "All" niches.</p>
+            </div>
+          `;
+          dirCountDisplay.textContent = '0';
+        } else {
+          let newCardsCount = 0;
+          channels.forEach((c) => {
+            const key = (c.handle || c.id || '').toLowerCase();
+            if (seenChannelKeys.has(key)) return;
+            seenChannelKeys.add(key);
+            newCardsCount++;
+
+            const card = document.createElement('div');
+            card.className = 'rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition border';
+            card.style.backgroundColor = 'var(--bg-surface)';
+            card.style.borderColor = 'var(--card-border)';
+
+            const firstLetter = (c.title || c.handle || 'C').replace(/^@/, '').trim().charAt(0).toUpperCase();
+            const colorTheme = AVATAR_PALETTE[seenChannelKeys.size % AVATAR_PALETTE.length];
+
+            card.innerHTML = `
+              <div class="flex items-start space-x-3.5 min-w-0 flex-1">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 select-none"
+                  style="background-color: ${colorTheme.bg}; color: ${colorTheme.text}; border: 1px solid rgba(255,255,255,0.08);"
+                >
+                  ${escapeHtml(firstLetter)}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-sm truncate" style="color: var(--text-primary);">${escapeHtml(c.title)}</span>
+                    <span class="text-xs font-mono" style="color: var(--text-muted);">${escapeHtml(c.handle)}</span>
+                  </div>
+                  <div class="text-[11px] mt-0.5 truncate flex items-center flex-wrap gap-1" style="color: var(--text-secondary);">
+                    <span class="font-semibold" style="color: var(--text-primary);">${escapeHtml(c.subscribersFormatted)}</span>
+                    <span>&bull;</span>
+                    <span class="font-medium text-[#f59e0b]">${escapeHtml(c.niche)}</span>
+                    <span>&bull;</span>
+                    <span>${escapeHtml(c.countryName || c.country)}</span>
+                    ${c.fallbackNotice ? `<span class="text-[10px] px-2 py-0.2 rounded-full border border-amber-500/30 text-amber-500 bg-amber-500/10 font-medium ml-1">${escapeHtml(c.fallbackNotice)}</span>` : ''}
+                  </div>
+                  <p class="text-xs mt-1 line-clamp-1" style="color: var(--text-secondary);">
+                    ${escapeHtml(c.description || 'Active YouTube creator creating videos in this niche.')}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Status Badge & Action Buttons (Visit + Copy @mention) -->
+              <div class="flex items-center space-x-2.5 shrink-0 sm:self-center">
+                <span class="hidden md:inline-flex items-center space-x-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full mr-1 border" style="background-color: var(--tag-collab-bg); color: var(--tag-collab-text); border-color: var(--tag-collab-border);">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background-color: var(--tag-collab-text);"></span>
+                  <span>Open to collabs</span>
+                </span>
+                
+                <button type="button" class="copy-handle-btn text-xs font-medium px-3 py-2 rounded-xl transition cursor-pointer border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+                  Copy @mention
+                </button>
+
+                <a 
+                  href="${sanitizeUrl(c.channelUrl)}" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="font-bold text-xs px-4 py-2 rounded-xl transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                  style="background-color: var(--accent-btn); color: var(--accent-btn-text);"
+                >
+                  <span>Visit</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </a>
+              </div>
+            `;
+
+            card.querySelector('.copy-handle-btn').addEventListener('click', () => {
+              copyHandle(c.handle);
+            });
+
+            dirCardsContainer.appendChild(card);
+          });
+
+          dirCountDisplay.textContent = seenChannelKeys.size;
+        }
+
+        // Show or hide "Load More" button based on token or more results
+        if (currentNextPageToken) {
+          dirLoadMoreContainer.classList.remove('hidden');
+          dirLoadMoreText.textContent = 'Load more creators';
+        } else {
+          dirLoadMoreContainer.classList.add('hidden');
+        }
+
+      } catch (err) {
+        console.error(err);
+        if (!isLoadMore) {
+          dirCardsContainer.innerHTML = `
+            <div class="rounded-2xl p-4 text-xs border bg-red-500/10 border-red-500/30 text-red-400">
+              Error loading directory: ${escapeHtml(err.message)}
+            </div>
+          `;
+        }
+      } finally {
+        isDirLoading = false;
+        dirLoadingIndicator.classList.add('hidden');
+        dirLoadMoreSpinner.classList.add('hidden');
+        dirLoadMoreIcon.classList.remove('hidden');
+        dirLoadMoreBtn.disabled = false;
+      }
+    }
+
+    if (dirLoadMoreBtn) {
+      dirLoadMoreBtn.addEventListener('click', () => {
+        loadDiscoverChannels(true);
+      });
+    }
+
+    // ==========================================
+    // 3. URL SCOUT LOGIC & DOM ELEMENTS
+    // ==========================================
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+    const apiKeySection = document.getElementById('apiKeySection');
+    const toggleApiSettingsBtn = document.getElementById('toggleApiSettingsBtn');
+    const apiStatusBadge = document.getElementById('apiStatusBadge');
+    const videoUrlInput = document.getElementById('videoUrlInput');
+    const pasteBtn = document.getElementById('pasteBtn');
+    const searchBtn = document.getElementById('searchBtn');
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+    const errorMessage = document.getElementById('errorMessage');
+    const resultsSection = document.getElementById('resultsSection');
+
+    const toggleMoreFiltersBtn = document.getElementById('toggleMoreFiltersBtn');
+    const moreFiltersSection = document.getElementById('moreFiltersSection');
+
+    const videoTitleDisplay = document.getElementById('videoTitleDisplay');
+    const commentsScannedCount = document.getElementById('commentsScannedCount');
+    const channelsAnalyzedCount = document.getElementById('channelsAnalyzedCount');
+    const creatorsFoundCount = document.getElementById('creatorsFoundCount');
+    const foundRegionLabel = document.getElementById('foundRegionLabel');
+    const creatorsListHeaderCount = document.getElementById('creatorsListHeaderCount');
+    const mentionsTextArea = document.getElementById('mentionsTextArea');
+    const copyAllMentionsBtn = document.getElementById('copyAllMentionsBtn');
+    const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+    const creatorsGrid = document.getElementById('creatorsGrid');
+    const toast = document.getElementById('toast');
+
+    const descFormattedTextArea = document.getElementById('descFormattedTextArea');
+    const descCountSelect = document.getElementById('descCountSelect');
+    const descStyleSelect = document.getElementById('descStyleSelect');
+    const copyDescBtn = document.getElementById('copyDescBtn');
+
+    const safeBatchesContainer = document.getElementById('safeBatchesContainer');
+    const batchSize3Btn = document.getElementById('batchSize3Btn');
+    const batchSize5Btn = document.getElementById('batchSize5Btn');
+    const timestampsSection = document.getElementById('timestampsSection');
+    const timestampsList = document.getElementById('timestampsList');
+
+    let currentCreators = [];
+    let currentBatchSize = 5;
+    let currentHighlights = [];
+
+    // Load API Key from local storage safely
+    try {
+      const savedKey = localStorage.getItem('yt_data_api_key') || '';
+      if (savedKey) {
+        apiKeyInput.value = savedKey;
+        apiStatusBadge.textContent = 'Key Saved ✓';
+        apiKeySection.classList.add('hidden');
+      }
+    } catch (e) {}
+
+    saveApiKeyBtn.addEventListener('click', () => {
+      const val = apiKeyInput.value.trim();
+      if (!val) {
+        showToast('Please enter a valid API key');
+        return;
+      }
+      try {
+        localStorage.setItem('yt_data_api_key', val);
+      } catch (e) {}
+      apiStatusBadge.textContent = 'Key Saved ✓';
+      apiKeySection.classList.add('hidden');
+      showToast('API Key saved securely!');
+      loadDiscoverChannels();
+    });
+
+    const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
+    if (clearApiKeyBtn) {
+      clearApiKeyBtn.addEventListener('click', () => {
+        try {
+          localStorage.removeItem('yt_data_api_key');
+        } catch (e) {}
+        apiKeyInput.value = '';
+        apiStatusBadge.textContent = 'API Key ↗';
+        showToast('API Key removed from browser storage');
+        loadDiscoverChannels();
+      });
+    }
+
+    toggleApiSettingsBtn.addEventListener('click', () => {
+      apiKeySection.classList.toggle('hidden');
+    });
+
+    toggleMoreFiltersBtn.addEventListener('click', () => {
+      moreFiltersSection.classList.toggle('hidden');
+      toggleMoreFiltersBtn.textContent = moreFiltersSection.classList.contains('hidden') ? 'Options' : 'Hide Options';
+    });
+
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) videoUrlInput.value = text;
+      } catch (err) {
+        videoUrlInput.focus();
+        showToast('Press Ctrl+V to paste');
+      }
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2200);
+    }
+
+    function copyHandle(handle) {
+      navigator.clipboard.writeText(handle);
+      showToast('Copied ' + handle);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Video URL Search Trigger
+    searchBtn.addEventListener('click', async () => {
+      const videoUrl = videoUrlInput.value.trim();
+      let apiKey = apiKeyInput.value.trim();
+      if (!apiKey) {
+        try {
+          apiKey = localStorage.getItem('yt_data_api_key') || '';
+        } catch (e) {}
+      }
+
+      if (!videoUrl) {
+        showToast('Please enter a YouTube video URL');
+        return;
+      }
+
+      if (!apiKey) {
+        apiKeySection.classList.remove('hidden');
+        apiKeyInput.focus();
+        showToast('Enter your YouTube Data API Key first');
+        return;
+      }
+
+      errorState.classList.add('hidden');
+      loadingState.classList.remove('hidden');
+      searchBtn.disabled = true;
+
+      try {
+        const targetCountry = document.getElementById('targetCountryInput').value;
+        const countryFilterMode = document.getElementById('countryFilterModeInput').value;
+        const activeDays = document.getElementById('activeDaysInput').value;
+
+        const payload = {
+          videoUrl,
+          apiKey,
+          targetCountry,
+          countryFilterMode,
+          activeDays,
+          minSubs: parseInt(document.getElementById('minSubsInput').value, 10),
+          maxSubs: parseInt(document.getElementById('maxSubsInput').value, 10),
+          minVideos: parseInt(document.getElementById('minVideosInput').value, 10),
+          maxComments: 300
+        };
+
+        const response = await fetch(getApiEndpoint('/api/analyze'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+          throw new Error(data.error || 'Failed to analyze video comments');
+        }
+
+        renderResults(data);
+
+      } catch (err) {
+        console.error(err);
+        let msg = err.message || 'Unknown error';
+        if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.toLowerCase().includes('fetch')) {
+          msg = 'Server connection failed. Make sure your local server is running and you are accessing the page through http://localhost:3000 (not opening index.html directly as a file).';
+        }
+        errorMessage.textContent = msg;
+        errorState.classList.remove('hidden');
+      } finally {
+        loadingState.classList.add('hidden');
+        searchBtn.disabled = false;
+      }
+    });
+
+    function highlightTimestampsInText(rawText) {
+      if (!rawText) return '';
+      const safe = escapeHtml(rawText);
+      return safe.replace(/\b((?:[0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9])\b/g, '<span class="timestamp-badge">$1</span>');
+    }
+
+    function formatRelativeTime(dateString) {
+      if (!dateString) return '';
+      const now = Date.now();
+      const past = new Date(dateString).getTime();
+      const diffSec = Math.floor((now - past) / 1000);
+      if (diffSec < 3600) return Math.max(1, Math.floor(diffSec / 60)) + 'm ago';
+      if (diffSec < 86400) return Math.floor(diffSec / 3600) + ' hours ago';
+      const days = Math.floor(diffSec / 86400);
+      if (days === 1) return '1 day ago';
+      if (days < 30) return days + ' days ago';
+      if (days < 365) return Math.floor(days / 30) + ' months ago';
+      return Math.floor(days / 365) + ' years ago';
+    }
+
+    function formatSubCount(num) {
+      if (num === null || num === undefined) return 'Hidden';
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M subs';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k subs';
+      return num + ' subs';
+    }
+
+    function renderResults(data) {
+      currentCreators = data.creators || [];
+      videoTitleDisplay.textContent = data.videoTitle || 'YouTube Video';
+      commentsScannedCount.textContent = data.totalCommentsScanned;
+      channelsAnalyzedCount.textContent = data.uniqueCommenters;
+      creatorsFoundCount.textContent = data.creatorsFoundCount;
+      creatorsListHeaderCount.textContent = data.creatorsFoundCount;
+
+      const regionNames = {
+        US: 'US creators',
+        GB: 'UK creators',
+        CA: 'Canadian creators',
+        AU: 'Australian creators',
+        DE: 'German creators',
+        TIER1: 'US/UK Tier-1 creators',
+        ANY: 'creators'
+      };
+      foundRegionLabel.textContent = regionNames[data.targetCountry] || 'creators';
+
+      currentHighlights = data.highlights || [];
+      updateMentionsText('space');
+      updateDescriptionBox();
+      renderSafeBatches();
+      renderTimestamps(currentHighlights);
+
+      creatorsGrid.innerHTML = '';
+      if (currentCreators.length === 0) {
+        creatorsGrid.innerHTML = `
+          <div class="col-span-full rounded-2xl p-8 text-center border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+            <p class="font-semibold text-sm" style="color: var(--text-primary);">No creators found matching these exact filters.</p>
+            <p class="text-xs mt-1.5" style="color: var(--text-muted);">Try changing Activity to "Any time" or increasing the Subs limit.</p>
+          </div>
+        `;
+      } else {
+        currentCreators.forEach((creator, idx) => {
+          const card = document.createElement('div');
+          card.className = 'rounded-2xl p-4 transition flex flex-col justify-between border';
+          card.style.backgroundColor = 'var(--bg-surface)';
+          card.style.borderColor = 'var(--card-border)';
+          
+          const firstLetter = (creator.title || creator.handle || 'C').replace(/^@/, '').trim().charAt(0).toUpperCase();
+          const colorTheme = AVATAR_PALETTE[idx % AVATAR_PALETTE.length];
+
+          const countryCode = creator.countryCode || 'US';
+          const subsFormatted = formatSubCount(creator.subscribers);
+          const timeAgo = formatRelativeTime(creator.commentDate);
+          const safeChannelUrl = sanitizeUrl(creator.channelUrl);
+          const highlightedComment = highlightTimestampsInText(creator.comment);
+
+          card.innerHTML = `
+            <div>
+              <div class="flex items-start space-x-3 mb-3">
+                <div 
+                  class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 select-none"
+                  style="background-color: ${colorTheme.bg}; color: ${colorTheme.text}; border: 1px solid rgba(255,255,255,0.08);"
+                >
+                  ${escapeHtml(firstLetter)}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <a href="${safeChannelUrl}" target="_blank" rel="noopener noreferrer" class="font-bold text-sm truncate block" style="color: var(--text-primary);">
+                    ${escapeHtml(creator.handle)}
+                  </a>
+                  <div class="text-[11px] truncate mt-0.5" style="color: var(--text-muted);">
+                    ${escapeHtml(countryCode)} &bull; ${escapeHtml(subsFormatted)} &bull; ${escapeHtml(timeAgo)}
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-xs leading-relaxed font-normal mb-4" style="color: var(--text-secondary);">
+                ${highlightedComment}
+              </div>
+            </div>
+
+            <div class="pt-2 border-t flex items-center justify-between" style="border-color: var(--border-color);">
+              <button type="button" class="copy-handle-btn text-xs font-medium px-3 py-1.5 rounded-lg transition cursor-pointer border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+                Copy @mention
+              </button>
+              <a href="${safeChannelUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1" style="background-color: var(--accent-btn); color: var(--accent-btn-text);" title="Visit YouTube channel">
+                <span>Visit</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              </a>
+            </div>
+          `;
+
+          card.querySelector('.copy-handle-btn').addEventListener('click', () => {
+            copyHandle(creator.handle);
+          });
+
+          creatorsGrid.appendChild(card);
+        });
+      }
+
+      resultsSection.classList.remove('hidden');
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateMentionsText(format) {
+      if (!currentCreators || currentCreators.length === 0) {
+        mentionsTextArea.value = '';
+        return;
+      }
+      if (format === 'newline') {
+        mentionsTextArea.value = currentCreators.map(c => c.handle).join('\n');
+      } else {
+        mentionsTextArea.value = currentCreators.map(c => c.handle).join(' ');
+      }
+    }
+
+    document.getElementById('formatSpaceBtn').addEventListener('click', (e) => {
+      document.getElementById('formatSpaceBtn').classList.add('active');
+      document.getElementById('formatNewlineBtn').classList.remove('active');
+      updateMentionsText('space');
+    });
+
+    document.getElementById('formatNewlineBtn').addEventListener('click', (e) => {
+      document.getElementById('formatNewlineBtn').classList.add('active');
+      document.getElementById('formatSpaceBtn').classList.remove('active');
+      updateMentionsText('newline');
+    });
+
+    copyAllMentionsBtn.addEventListener('click', () => {
+      if (!mentionsTextArea.value) return;
+      navigator.clipboard.writeText(mentionsTextArea.value);
+      showToast('Copied all mentions to clipboard!');
+    });
+
+    function updateDescriptionBox() {
+      if (!currentCreators || currentCreators.length === 0) {
+        descFormattedTextArea.value = '';
+        return;
+      }
+      const count = parseInt(descCountSelect.value, 10) || 5;
+      const topCreators = currentCreators.slice(0, count);
+      const handles = topCreators.map(c => c.handle).join(' ');
+      const style = descStyleSelect.value;
+
+      let text = '';
+      if (style === 'credits') {
+        text = 'Special inspiration & credits to awesome creators in this space:\n' + handles + '\nKeep inspiring and creating great content!';
+      } else if (style === 'minimal') {
+        text = 'Fellow creators & inspiration: ' + handles;
+      } else {
+        text = 'Community shoutout to fellow creators:\n' + handles + '\nMake sure to check out their channels too!';
+      }
+      descFormattedTextArea.value = text;
+    }
+
+    descCountSelect.addEventListener('change', updateDescriptionBox);
+    descStyleSelect.addEventListener('change', updateDescriptionBox);
+
+    copyDescBtn.addEventListener('click', () => {
+      if (!descFormattedTextArea.value) return;
+      navigator.clipboard.writeText(descFormattedTextArea.value);
+      showToast('Copied description block!');
+    });
+
+    function renderSafeBatches() {
+      safeBatchesContainer.innerHTML = '';
+      if (!currentCreators || currentCreators.length === 0) {
+        safeBatchesContainer.innerHTML = '<p class="text-xs" style="color: var(--text-muted);">No creators found to batch.</p>';
+        return;
+      }
+
+      const batches = [];
+      for (let i = 0; i < currentCreators.length; i += currentBatchSize) {
+        batches.push(currentCreators.slice(i, i + currentBatchSize));
+      }
+
+      batches.forEach((batch, idx) => {
+        const batchNum = idx + 1;
+        const batchHandles = batch.map(c => c.handle).join(' ');
+        const row = document.createElement('div');
+        row.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl text-xs border';
+        row.style.backgroundColor = 'var(--code-bg)';
+        row.style.borderColor = 'var(--border-color)';
+
+        row.innerHTML = `
+          <div class="flex items-center space-x-2.5 min-w-0">
+            <span class="font-bold text-[11px] px-2 py-0.5 rounded-md border shrink-0" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">Batch ${batchNum} (${batch.length})</span>
+            <span class="font-mono truncate" style="color: var(--text-secondary);">${escapeHtml(batchHandles)}</span>
+          </div>
+          <button 
+            type="button" 
+            class="copy-batch-btn font-medium text-[11px] px-3 py-1.5 rounded-lg border shrink-0 transition flex items-center space-x-1 cursor-pointer"
+            style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary);"
+          >
+            <span>Copy Batch ${batchNum}</span>
+          </button>
+        `;
+
+        row.querySelector('.copy-batch-btn').addEventListener('click', () => {
+          navigator.clipboard.writeText(batchHandles);
+          showToast('Copied Batch ' + batchNum + ' (' + batch.length + ' handles)');
+        });
+
+        safeBatchesContainer.appendChild(row);
+      });
+    }
+
+    batchSize3Btn.addEventListener('click', () => {
+      currentBatchSize = 3;
+      batchSize3Btn.classList.add('active');
+      batchSize5Btn.classList.remove('active');
+      renderSafeBatches();
+    });
+
+    batchSize5Btn.addEventListener('click', () => {
+      currentBatchSize = 5;
+      batchSize5Btn.classList.add('active');
+      batchSize3Btn.classList.remove('active');
+      renderSafeBatches();
+    });
+
+    function renderTimestamps(highlights) {
+      timestampsList.innerHTML = '';
+      if (!highlights || highlights.length === 0) {
+        timestampsSection.classList.add('hidden');
+        return;
+      }
+
+      timestampsSection.classList.remove('hidden');
+      highlights.forEach(h => {
+        const pill = document.createElement('div');
+        pill.className = 'rounded-xl px-3 py-2 text-xs flex items-center space-x-2 transition cursor-pointer border';
+        pill.style.backgroundColor = 'var(--timestamp-bg)';
+        pill.style.borderColor = 'var(--timestamp-border)';
+        pill.title = h.sampleText ? 'Comment: "' + h.sampleText + '"' : '';
+        pill.innerHTML = `
+          <span class="font-mono font-bold" style="color: var(--timestamp-text);">${escapeHtml(h.timestamp)}</span>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md" style="background-color: var(--bg-pill); color: var(--text-primary);">${h.mentions} mentions</span>
+        `;
+        pill.onclick = () => {
+          navigator.clipboard.writeText(h.timestamp);
+          showToast('Copied timestamp ' + h.timestamp);
+        };
+        timestampsList.appendChild(pill);
+      });
+    }
+
+    function triggerCsvDownload() {
+      if (!currentCreators || currentCreators.length === 0) {
+        showToast('Load creators first before exporting CSV');
+        return;
+      }
+
+      const headers = [
+        'Channel Name',
+        'Mention Handle',
+        'Channel URL',
+        'Country Code',
+        'Country Name',
+        'Verification Type',
+        'Subscribers',
+        'Videos Uploaded',
+        'Latest Upload Date',
+        'Days Since Last Upload',
+        'Activity Status',
+        'Comment Text',
+        'Comment Likes',
+        'Comment Date'
+      ];
+      
+      const rows = currentCreators.map(c => [
+        sanitizeCsvCell(c.title || ''),
+        sanitizeCsvCell(c.handle || ''),
+        sanitizeCsvCell(c.channelUrl || ''),
+        sanitizeCsvCell(c.countryCode || ''),
+        sanitizeCsvCell(c.countryName || ''),
+        sanitizeCsvCell(c.verificationType || ''),
+        c.subscribers !== null ? c.subscribers : 'Hidden',
+        c.videoCount,
+        sanitizeCsvCell(c.latestUploadDate || 'N/A'),
+        c.daysSinceUpload !== null ? c.daysSinceUpload : 'N/A',
+        sanitizeCsvCell(c.activityLabel || 'Unknown'),
+        sanitizeCsvCell((c.comment || '').replace(/\n/g, ' ')),
+        c.commentLikes,
+        sanitizeCsvCell(c.commentDate || '')
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'CreatorScout_Export_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('CSV downloaded successfully!');
+    }
+
+    downloadCsvBtn.addEventListener('click', triggerCsvDownload);
+
+    function sanitizeUrl(rawUrl) {
+      if (!rawUrl || typeof rawUrl !== 'string') return '#';
+      try {
+        const parsed = new URL(rawUrl, window.location.origin);
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+          return parsed.href;
+        }
+      } catch (e) {}
+      return '#';
+    }
+
+    function sanitizeCsvCell(val) {
+      if (val === null || val === undefined) return '""';
+      let str = String(val).replace(/[\r\n]+/g, ' ').trim();
+      if (/^[=\+\-@\t]/.test(str)) {
+        str = "'" + str;
+      }
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Default: Load Discover Channels on Page Load
+    loadDiscoverChannels();
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "yt-us-creator-filter",
+  "version": "1.0.0",
+  "description": "YouTube US Little Creator Finder & Mention Tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "youtube",
+    "mentions",
+    "creator-finder"
+  ],
+  "author": "",
+  "license": "MIT"
+}
