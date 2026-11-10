@@ -1176,6 +1176,91 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // API Endpoint: /api/admin/submissions (Fetch all community submitted channels for moderation)
+  if (req.method === 'GET' && parsedUrl.pathname === '/api/admin/submissions') {
+    const submissionsFile = path.resolve(__dirname, 'submitted-channels.json');
+    let existing = [];
+    try {
+      if (fs.existsSync(submissionsFile)) {
+        existing = JSON.parse(fs.readFileSync(submissionsFile, 'utf8') || '[]');
+      }
+    } catch (e) {
+      existing = [];
+    }
+
+    const submissions = (Array.isArray(existing) ? existing : []).map((s, idx) => ({
+      ...s,
+      id: s.id || ('sub_' + (s.handle || idx).toString().replace(/[^a-zA-Z0-9]/g, '')),
+      status: s.status || 'pending',
+      title: s.title || (s.handle ? s.handle.replace(/^@/, '') : 'Creator'),
+      handle: s.handle || '@creator',
+      niche: s.niche || 'General',
+      country: s.country || 'US',
+      subscribers: s.subscribers || 5000,
+      submittedAt: s.submittedAt || new Date().toISOString()
+    }));
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, count: submissions.length, submissions }));
+    return;
+  }
+
+  // API Endpoint: /api/admin/update-status (Approve or Reject community submitted channels)
+  if (req.method === 'POST' && parsedUrl.pathname === '/api/admin/update-status') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk;
+      if (body.length > 50000) {
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload too large' }));
+        req.destroy();
+      }
+    });
+
+    req.on('end', () => {
+      try {
+        const { id, status } = JSON.parse(body || '{}');
+        if (!id || !status) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Missing id or status' }));
+          return;
+        }
+
+        const submissionsFile = path.resolve(__dirname, 'submitted-channels.json');
+        let existing = [];
+        try {
+          if (fs.existsSync(submissionsFile)) {
+            existing = JSON.parse(fs.readFileSync(submissionsFile, 'utf8') || '[]');
+          }
+        } catch (e) {
+          existing = [];
+        }
+
+        let updated = false;
+        existing = existing.map(item => {
+          const itemId = item.id || ('sub_' + (item.handle || '').replace(/[^a-zA-Z0-9]/g, ''));
+          if (itemId === id || item.handle === id || item.id === id) {
+            item.status = status;
+            item.reviewedAt = new Date().toISOString();
+            updated = true;
+          }
+          return item;
+        });
+
+        if (updated) {
+          fs.writeFileSync(submissionsFile, JSON.stringify(existing, null, 2), 'utf8');
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, id, status, updated }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to update submission status' }));
+      }
+    });
+    return;
+  }
+
   // Allow only GET and HEAD requests for static files
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { 'Content-Type': 'text/plain' });

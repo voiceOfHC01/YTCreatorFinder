@@ -1,13 +1,17 @@
 [
   {
+    "id": "sub_1794278200001",
     "handle": "@TechWithHasib",
     "title": "Tech With Hasib",
     "niche": "Tech",
     "country": "US",
+    "subscribers": 4500,
     "subRange": "1k-10k",
     "collabType": "Podcast guest",
-    "email": "",
-    "submittedAt": "2026-11-10T01:56:33.950Z"
+    "email": "creator@example.com",
+    "status": "rejected",
+    "submittedAt": "2026-11-10T01:56:33.950Z",
+    "reviewedAt": "2026-11-10T06:46:03.289Z"
   },
   {
     "id": "sub_1794278203029",
@@ -19,7 +23,9 @@
     "subRange": "100k+",
     "collabType": "General Collabs",
     "email": "",
-    "submittedAt": "2026-11-10T02:36:43.029Z"
+    "status": "rejected",
+    "submittedAt": "2026-11-10T02:36:43.029Z",
+    "reviewedAt": "2026-11-10T06:46:02.695Z"
   },
   {
     "id": "sub_1794278218526",
@@ -31,7 +37,9 @@
     "subRange": "1k - 10k",
     "collabType": "General Collabs",
     "email": "",
-    "submittedAt": "2026-11-10T02:36:58.526Z"
+    "status": "rejected",
+    "submittedAt": "2026-11-10T02:36:58.526Z",
+    "reviewedAt": "2026-11-10T06:46:02.137Z"
   },
   {
     "id": "sub_1794278218539",
@@ -43,6 +51,7 @@
     "subRange": "1k - 10k",
     "collabType": "General Collabs",
     "email": "",
+    "status": "pending",
     "submittedAt": "2026-11-10T02:36:58.539Z"
   },
   {
@@ -55,6 +64,8 @@
     "subRange": "1k - 10k",
     "collabType": "General Collabs",
     "email": "",
-    "submittedAt": "2026-11-10T02:36:58.546Z"
+    "status": "pending",
+    "submittedAt": "2026-11-10T02:36:58.546Z",
+    "reviewedAt": "2026-11-10T06:13:40.775Z"
   }
 ]

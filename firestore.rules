@@ -8,15 +8,39 @@ service cloud.firestore {
     // ===============================================================
     //
     // Collection: channel_submissions
-    // Document ID: [auto-generated Firestore document ID]
-    //
+    // Document ID: [auto-generated Firestore document ID or submission ID]
     // Fields:
-    //   - handle: string (required, 1..100 chars, e.g. '@mkbhd' or 'mkbhd') - YouTube channel identifier
-    //   - niche: string (required, 2..50 chars, e.g. 'tech', 'gaming', 'finance', 'education', 'lifestyle', 'crypto', 'fitness') - Primary content niche
-    //   - reason: string (optional, 0..500 chars) - Pitch, description, or notes
-    //   - contact: string (optional, 0..100 chars) - Submitter contact handle or email
-    //   - submittedAt: timestamp (required, immutable) - Must equal request.time via FieldValue.serverTimestamp()
-    //   - status: string (required) - Moderation status: 'pending' on creation, 'approved' | 'rejected' on admin update
+    //   - handle: string (required, immutable, 1..100 chars) - YouTube channel handle/identifier
+    //   - niche: string (required, 2..50 chars) - Primary channel content category
+    //   - status: string (required, 'pending' on create; 'pending' | 'approved' | 'rejected' on update) - Moderation status
+    //   - submittedAt: timestamp (required, immutable) - Submission timestamp (server timestamp)
+    //   - title: string (optional, 0..100 chars) - Channel display name or title
+    //   - reason: string (optional, 0..500 chars) - Submission reason, pitch, or notes
+    //   - contact: string (optional, 0..100 chars) - Submitter contact info or social handle
+    //   - country: string (optional, 0..10 chars) - Channel or creator country code
+    //   - subRange: string (optional, 0..50 chars) - Subscriber count tier range
+    //   - collabType: string (optional, 0..50 chars) - Desired collaboration type
+    //   - email: string (optional, 0..100 chars) - Submitter contact email address
+    //   - subscribers: number (optional, >= 0) - Approximate numeric subscriber count
+    //   - reviewedAt: timestamp | string (optional on update, 0..50 chars) - Moderation review timestamp
+    //   - reviewedBy: string (optional on update, 0..100 chars) - Reviewing admin identifier
+    //
+    // Collection: users/{userId}/saved_creators
+    // Document ID: [creator key / sanitized handle / channel ID]
+    // Fields:
+    //   - title: string (optional, 0..200 chars) - Creator channel title
+    //   - handle: string (optional, 0..100 chars) - YouTube creator handle
+    //   - subscribersFormatted: string | number (optional, 0..100 chars) - Formatted subscriber display
+    //   - niche: string (optional, 0..100 chars) - Creator niche
+    //   - country: string (optional, 0..100 chars) - Country name or country code
+    //   - channelUrl: string (optional, 0..500 chars) - Canonical YouTube channel URL
+    //   - description: string (optional, 0..1000 chars) - Bio or description snippet
+    //   - savedAt: timestamp | string (optional, 0..50 chars) - Bookmark creation timestamp
+    //   - id: string (optional, 0..100 chars) - Channel internal ID
+    //   - subscribers: number | string (optional, 0..50 chars) - Numeric subscriber count
+    //   - videoCount: number (optional, >= 0) - Uploaded video count
+    //   - avatar: string (optional, 0..500 chars) - Avatar or thumbnail URL
+    //   - notes: string (optional, 0..1000 chars) - User custom notes for saved creator
     //
     // ===============================================================
 
@@ -29,12 +53,17 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Check if the authenticated user has an admin custom claim, admin role, or verified owner email
+    // Check if the authenticated user is the owner of the resource based on userId path
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if the authenticated user is an administrator via email or custom claims
     function isAdmin() {
       return isAuthenticated() &&
         (request.auth.token.get('admin', false) == true ||
          request.auth.token.get('role', '') == 'admin' ||
-         request.auth.token.email == 'hasibul80801@gmail.com');
+         ('email' in request.auth.token && request.auth.token.email == 'hasibul80801@gmail.com'));
     }
 
     // Verify document contains all mandatory fields
@@ -42,7 +71,7 @@ service cloud.firestore {
       return request.resource.data.keys().hasAll(fields);
     }
 
-    // Strict schema protection: document must NOT contain any unauthorized fields
+    // Strict schema enforcement: document must NOT contain any unauthorized fields
     function hasOnlyAllowedFields(fields) {
       return request.resource.data.keys().hasOnly(fields);
     }
@@ -68,57 +97,103 @@ service cloud.firestore {
     }
 
     // ===============================================================
-    // Domain Validators
+    // Domain Validators (Validator Function Pattern)
     // ===============================================================
 
-    // Comprehensive validator for new channel submissions (create)
+    // Validator for new channel submissions (create)
     function isValidSubmission(data) {
-      return hasOnlyAllowedFields(['handle', 'niche', 'reason', 'contact', 'submittedAt', 'status']) &&
-        hasRequiredFields(['handle', 'niche', 'submittedAt', 'status']) &&
+      return hasOnlyAllowedFields([
+          'handle', 'niche', 'status', 'submittedAt',
+          'title', 'reason', 'contact', 'country',
+          'subRange', 'collabType', 'email', 'subscribers'
+        ]) &&
+        hasRequiredFields(['handle', 'niche', 'status', 'submittedAt']) &&
         validStringLength('handle', 1, 100) &&
         validStringLength('niche', 2, 50) &&
+        data.status is string &&
+        data.status == 'pending' &&
+        data.submittedAt is timestamp &&
+        isValidOptionalString('title', 0, 100) &&
         isValidOptionalString('reason', 0, 500) &&
         isValidOptionalString('contact', 0, 100) &&
-        data.submittedAt is timestamp &&
-        data.submittedAt == request.time &&
-        data.status is string &&
-        data.status == 'pending';
+        isValidOptionalString('country', 0, 10) &&
+        isValidOptionalString('subRange', 0, 50) &&
+        isValidOptionalString('collabType', 0, 50) &&
+        isValidOptionalString('email', 0, 100) &&
+        (!('subscribers' in data) || (data.subscribers is number && data.subscribers >= 0));
     }
 
-    // Comprehensive validator for submission updates (admin only)
+    // Validator for submission updates (admin only)
     function isValidSubmissionUpdate(data) {
-      return hasOnlyAllowedFields(['handle', 'niche', 'reason', 'contact', 'submittedAt', 'status']) &&
-        hasRequiredFields(['handle', 'niche', 'submittedAt', 'status']) &&
+      return hasOnlyAllowedFields([
+          'handle', 'niche', 'status', 'submittedAt',
+          'title', 'reason', 'contact', 'country',
+          'subRange', 'collabType', 'email', 'subscribers',
+          'reviewedAt', 'reviewedBy'
+        ]) &&
+        hasRequiredFields(['handle', 'niche', 'status', 'submittedAt']) &&
         areImmutableFieldsUnchanged(['handle', 'submittedAt']) &&
+        data.handle == resource.data.handle &&
+        data.submittedAt == resource.data.submittedAt &&
         validStringLength('niche', 2, 50) &&
+        data.status is string &&
+        data.status in ['pending', 'approved', 'rejected'] &&
+        isValidOptionalString('title', 0, 100) &&
         isValidOptionalString('reason', 0, 500) &&
         isValidOptionalString('contact', 0, 100) &&
-        data.status is string &&
-        data.status in ['pending', 'approved', 'rejected'];
+        isValidOptionalString('country', 0, 10) &&
+        isValidOptionalString('subRange', 0, 50) &&
+        isValidOptionalString('collabType', 0, 50) &&
+        isValidOptionalString('email', 0, 100) &&
+        (!('subscribers' in data) || (data.subscribers is number && data.subscribers >= 0)) &&
+        (!('reviewedAt' in data) || (data.reviewedAt is timestamp) || (data.reviewedAt is string && data.reviewedAt.size() <= 50)) &&
+        isValidOptionalString('reviewedBy', 0, 100);
+    }
+
+    // Validator for saved creator bookmarks (create & update)
+    function isValidSavedCreator(data) {
+      return hasOnlyAllowedFields([
+          'title', 'handle', 'subscribersFormatted', 'niche',
+          'country', 'channelUrl', 'description', 'savedAt',
+          'id', 'subscribers', 'videoCount', 'avatar', 'notes'
+        ]) &&
+        isValidOptionalString('title', 0, 200) &&
+        isValidOptionalString('handle', 0, 100) &&
+        (!('subscribersFormatted' in data) || (data.subscribersFormatted is string && data.subscribersFormatted.size() <= 100) || (data.subscribersFormatted is number)) &&
+        isValidOptionalString('niche', 0, 100) &&
+        isValidOptionalString('country', 0, 100) &&
+        isValidOptionalString('channelUrl', 0, 500) &&
+        isValidOptionalString('description', 0, 1000) &&
+        isValidOptionalString('id', 0, 100) &&
+        isValidOptionalString('avatar', 0, 500) &&
+        isValidOptionalString('notes', 0, 1000) &&
+        (!('subscribers' in data) || (data.subscribers is number && data.subscribers >= 0) || (data.subscribers is string && data.subscribers.size() <= 50)) &&
+        (!('videoCount' in data) || (data.videoCount is number && data.videoCount >= 0)) &&
+        (!('savedAt' in data) || (data.savedAt is timestamp) || (data.savedAt is string && data.savedAt.size() <= 50));
     }
 
     // ===============================================================
     // Collection Rules: channel_submissions
     // ===============================================================
     match /channel_submissions/{submissionId} {
-      // 1. PUBLIC CREATE:
-      // Allow unauthenticated visitors to submit their YouTube channel.
-      // Enforces strict schema, field size limits, server timestamp, and default 'pending' status.
+      // 1. PUBLIC / AUTHENTICATED CREATE:
+      // Community creators and visitors can submit channels for review.
+      // Enforces strict schema, field size limits, timestamp, and default 'pending' status.
       allow create: if isValidSubmission(request.resource.data);
 
       // 2. READ ACCESS:
-      // Client-side public can read approved channels for public catalog/directory display.
-      // Admins can read all submissions (pending, approved, rejected) for moderation.
-      // NOTE: Queries by public clients must explicitly include `where('status', '==', 'approved')`.
+      // Public visitors can only query and read approved channels for catalog display.
+      // Administrators (hasibul80801@gmail.com or custom claim) can read all submissions (pending, approved, rejected).
+      // Client queries for public non-admins must filter: where('status', '==', 'approved').
       allow read: if (resource.data.status == 'approved') || isAdmin();
 
       // 3. UPDATE ACCESS:
-      // Disallow public updates to prevent vandalism, unauthorized status changes, or data tampering.
-      // Only authorized administrators can update (e.g. approve/reject status).
+      // Strictly restricted to Administrators to prevent unauthorized moderation changes or vandalism.
+      // Immutable fields (handle, submittedAt) cannot be altered.
       allow update: if isAdmin() && isValidSubmissionUpdate(request.resource.data);
 
       // 4. DELETE ACCESS:
-      // Disallow public deletion. Only administrators can prune or remove submissions.
+      // Strictly restricted to Administrators for pruning spam or rejected submissions.
       allow delete: if isAdmin();
     }
 
@@ -126,8 +201,11 @@ service cloud.firestore {
     // Collection Rules: users/{userId}/saved_creators
     // ===============================================================
     match /users/{userId}/saved_creators/{bookmarkId} {
-      // Authenticated users can manage their own saved creators / bookmarks
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      // Authenticated users can read and delete their own saved creator bookmarks
+      allow read, delete: if isOwner(userId);
+
+      // Authenticated users can save or update bookmarks subject to strict schema and size bounds
+      allow create, update: if isOwner(userId) && isValidSavedCreator(request.resource.data);
     }
 
     // ===============================================================
