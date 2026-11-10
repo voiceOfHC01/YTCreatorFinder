@@ -26,7 +26,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'tech_12', title: 'NorthernTechTuts', handle: '@northerntechtuts', subscribers: 72000, niche: 'Tech', country: 'CA', description: 'Cybersecurity fundamentals, ethical hacking walkthroughs, and networking.', videoCount: 105 },
     // 100k - 500k
     { id: 'tech_13', title: 'CraftingCode', handle: '@craftingcode', subscribers: 185000, niche: 'Tech', country: 'US', description: 'High-production software architecture breakdowns and developer culture essays.', videoCount: 120 },
-    { id: 'tech_14', title: 'Dave2DInsights', handle: '@dave2dinsights', subscribers: 340000, niche: 'Tech', country: 'CA', description: 'Clean aesthetic tech reviews, ultrabooks, and industrial design teardowns.', videoCount: 140 },
+    { id: 'tech_14', title: 'Matthew Moniz', handle: '@MatthewMoniz', subscribers: 720000, niche: 'Tech', country: 'CA', description: 'Detailed laptop, smartphone, and tech gadget reviews and comparisons.', videoCount: 650 },
     { id: 'tech_15', title: 'TechSpurtUK', handle: '@techspurtuk', subscribers: 420000, niche: 'Tech', country: 'GB', description: 'Smartphone camera tests, budget audio gear, and real-world buyer guides.', videoCount: 210 },
     // 500k - 2M
     { id: 'tech_16', title: 'OptimumTech', handle: '@optimumtech', subscribers: 1150000, niche: 'Tech', country: 'AU', description: 'Small form factor PC builds, competitive gaming peripherals, and audio testing.', videoCount: 165 },
@@ -36,8 +36,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'tech_19', title: 'Mrwhosetheboss', handle: '@mrwhosetheboss', subscribers: 9200000, niche: 'Tech', country: 'GB', description: 'High-energy smartphone deep dives, futuristic concept tech, and gadget comparisons.', videoCount: 520 },
     // 10M+
     { id: 'tech_mkbhd', title: 'Marques Brownlee', handle: '@mkbhd', subscribers: 19400000, niche: 'Tech', country: 'US', description: 'Quality tech videos | YouTuber | Geek | Ultimate Frisbee player | Podcaster.', videoCount: 1680 },
-    { id: 'tech_linus', title: 'Linus Tech Tips', handle: '@LinusTechTips', subscribers: 15800000, niche: 'Tech', country: 'CA', description: 'Passionate people building innovative tech videos: PC builds, hardware torture tests, and server racks.', videoCount: 6500 },
-    { id: 'tech_mrbeast', title: 'MrBeast', handle: '@MrBeast', subscribers: 345000000, niche: 'Tech', country: 'US', description: 'Extreme gadgets, mega tech experiments, and building crazy high-tech creations.', videoCount: 840 }
+    { id: 'tech_linus', title: 'Linus Tech Tips', handle: '@LinusTechTips', subscribers: 15800000, niche: 'Tech', country: 'CA', description: 'Passionate people building innovative tech videos: PC builds, hardware torture tests, and server racks.', videoCount: 6500 }
   ],
 
   'Gaming': [
@@ -57,7 +56,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'game_11', title: 'NorthernLooter', handle: '@northernlooter', subscribers: 84000, niche: 'Gaming', country: 'CA', description: 'ARPG character builds for Path of Exile and Diablo IV league starters.', videoCount: 140 },
     // 100k - 500k
     { id: 'game_12', title: 'NeverKnowsBest', handle: '@neverknowsbest', subscribers: 280000, niche: 'Gaming', country: 'US', description: 'Long-form video essays analyzing RPG mechanics and narrative design.', videoCount: 65 },
-    { id: 'game_13', title: 'SkillUpClips', handle: '@skillupclips', subscribers: 390000, niche: 'Gaming', country: 'AU', description: 'Curated weekly gaming news recaps and unmissable release impressions.', videoCount: 175 },
+    { id: 'game_13', title: 'SkillUp', handle: '@skillup', subscribers: 980000, niche: 'Gaming', country: 'AU', description: 'Weekly gaming news recaps and unmissable release impressions.', videoCount: 350 },
     // 500k - 2M
     { id: 'game_14', title: 'SkillUp', handle: '@skillup', subscribers: 1050000, niche: 'Gaming', country: 'AU', description: 'Honest game reviews, thorough industry journalism, and podcast discussions.', videoCount: 320 },
     { id: 'game_15', title: 'GarrysGamingHub', handle: '@garrysgaminghub', subscribers: 1420000, niche: 'Gaming', country: 'GB', description: 'Funny sandbox gaming highlights, challenges, and comedy gaming edits.', videoCount: 410 },
@@ -86,7 +85,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'diy_10', title: 'OzMakerLab', handle: '@ozmakerlab', subscribers: 42000, niche: 'Maker & DIY', country: 'AU', description: 'Custom off-grid campervan conversions and solar electrical setups.', videoCount: 49 },
     // 100k - 500k
     { id: 'diy_11', title: 'FourPenceWorkshop', handle: '@fourpenceworkshop', subscribers: 240000, niche: 'Maker & DIY', country: 'GB', description: 'Traditional joinery techniques combined with contemporary industrial metalwork.', videoCount: 82 },
-    { id: 'diy_12', title: 'BlacktailStudioMinis', handle: '@blacktailstudiominis', subscribers: 380000, niche: 'Maker & DIY', country: 'US', description: 'Live edge epoxy river tables, flattening slabs, and wood finish tests.', videoCount: 95 },
+    { id: 'diy_12', title: 'Blacktail Studio', handle: '@blacktailstudio', subscribers: 2500000, niche: 'Maker & DIY', country: 'US', description: 'Live edge epoxy river tables, flattening slabs, and wood finish tests.', videoCount: 160 },
     // 500k - 2M
     { id: 'diy_13', title: 'BourbonMothWoodworking', handle: '@bourbonmoth', subscribers: 1250000, niche: 'Maker & DIY', country: 'US', description: 'Humorous, relatable fine woodworking projects with step-by-step masterclasses.', videoCount: 160 },
     // 2M - 10M
@@ -168,7 +167,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'cook_09', title: 'TheBritishTable', handle: '@thebritishtable', subscribers: 82000, niche: 'Cooking', country: 'GB', description: 'Sunday roasts, homemade gravy, beef wellington, and classic meat pies.', videoCount: 75 },
     { id: 'cook_10', title: 'SydneyBites', handle: '@sydneybites', subscribers: 36000, niche: 'Cooking', country: 'AU', description: 'Fresh seafood recipes, barramundi pan frying, and citrus marinades.', videoCount: 50 },
     // 100k - 500k
-    { id: 'cook_11', title: 'EthanChlebowskiPlus', handle: '@ethanchlebowskiplus', subscribers: 380000, niche: 'Cooking', country: 'US', description: 'Food science experiments, testing cooking myths, and blind taste comparisons.', videoCount: 125 },
+    { id: 'cook_11', title: 'Ethan Chlebowski', handle: '@EthanChlebowski', subscribers: 1950000, niche: 'Cooking', country: 'US', description: 'Food science experiments, testing cooking myths, and blind taste comparisons.', videoCount: 310 },
     { id: 'cook_12', title: 'SortedFoodShorts', handle: '@sortedfoodshorts', subscribers: 490000, niche: 'Cooking', country: 'GB', description: 'Chefs vs Normals kitchen gadgets, recipe taste tests, and food battles.', videoCount: 190 },
     // 500k - 2M
     { id: 'cook_13', title: 'NotAnotherCookingShow', handle: '@notanothercookingshow', subscribers: 1180000, niche: 'Cooking', country: 'US', description: 'Authentic Italian-American pastas, chicken parm, and high-energy cooking tips.', videoCount: 260 },
@@ -216,12 +215,12 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'fin_06', title: 'UKMoneyMatters', handle: '@ukmoneymatters', subscribers: 6400, niche: 'Finance', country: 'GB', description: 'Vanguard LifeStrategy funds, mortgage fixed rates, and national insurance advice.', videoCount: 46 },
     { id: 'fin_07', title: 'MapleMoneyPath', handle: '@maplemoneypath', subscribers: 4900, niche: 'Finance', country: 'CA', description: 'TFSA vs RRSP maximization, Canadian real estate trends, and XEQT investing.', videoCount: 38 },
     // 10k - 100k
-    { id: 'fin_08', title: 'ThePlainBagelBites', handle: '@theplainbagelbites', subscribers: 78000, niche: 'Finance', country: 'CA', description: 'CFA charterholder reacts to misleading financial TikTok trends and crypto scams.', videoCount: 65 },
+    { id: 'fin_08', title: 'Preston Pysh', handle: '@prestonpysh', subscribers: 98000, niche: 'Finance', country: 'US', description: 'Central banking balance sheet analysis, value investing, and market liquidity cycles.', videoCount: 145 },
     { id: 'fin_09', title: 'DamienTalksMoneyUK', handle: '@damientalksmoneyuk', subscribers: 89000, niche: 'Finance', country: 'GB', description: 'Bite-sized UK macroeconomic news, interest rate updates, and pension strategies.', videoCount: 88 },
     { id: 'fin_10', title: 'AussieWealthCreator', handle: '@aussiewealthcreator', subscribers: 54000, niche: 'Finance', country: 'AU', description: 'Negative gearing explained, Australian dividend imputation credits, and passive income.', videoCount: 72 },
     // 100k - 500k
-    { id: 'fin_11', title: 'BenFelixClips', handle: '@benfelixclips', subscribers: 360000, niche: 'Finance', country: 'CA', description: 'Rational investing advice backed by financial literature and factor regression analysis.', videoCount: 110 },
-    { id: 'fin_12', title: 'MarkTilburyShorts', handle: '@marktilburyshorts', subscribers: 480000, niche: 'Finance', country: 'GB', description: 'Millionaire business advice, negotiating raises, and financial literacy humor.', videoCount: 195 },
+    { id: 'fin_11', title: 'Ben Felix', handle: '@BenFelixCSI', subscribers: 360000, niche: 'Finance', country: 'CA', description: 'Rational investing advice backed by financial literature and factor regression analysis.', videoCount: 110 },
+    { id: 'fin_12', title: 'Mark Tilbury', handle: '@marktilbury', subscribers: 480000, niche: 'Finance', country: 'GB', description: 'Millionaire business advice, negotiating raises, and financial literacy humor.', videoCount: 195 },
     // 500k - 2M
     { id: 'fin_13', title: 'ThePlainBagel', handle: '@theplainbagel', subscribers: 1250000, niche: 'Finance', country: 'CA', description: 'Clear, level-headed personal finance education, stock market history, and economic analysis.', videoCount: 210 },
     // 2M - 10M
@@ -245,7 +244,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'sci_09', title: 'BritishChemistryLab', handle: '@britishchemistrylab', subscribers: 85000, niche: 'Science', country: 'GB', description: 'Fascinating chemical reactions, crystal growing timelapse, and organic synthesis.', videoCount: 76 },
     { id: 'sci_10', title: 'GreatBarrierReefSci', handle: '@greatbarrierreefsci', subscribers: 63000, niche: 'Science', country: 'AU', description: 'Marine biology expeditions, coral reef bleaching recovery, and sea turtle tracking.', videoCount: 49 },
     // 100k - 500k
-    { id: 'sci_11', title: 'AlphaPhoenixClips', handle: '@alphaphoenixclips', subscribers: 320000, niche: 'Science', country: 'US', description: 'Hands-on physics experiments: measuring speed of light, Schlieren imaging.', videoCount: 92 },
+    { id: 'sci_11', title: 'AlphaPhoenix', handle: '@alphaphoenix', subscribers: 320000, niche: 'Science', country: 'US', description: 'Hands-on physics experiments: measuring speed of light, Schlieren imaging.', videoCount: 92 },
     { id: 'sci_12', title: 'ChemistryTalks', handle: '@chemistrytalks', subscribers: 240000, niche: 'Science', country: 'CA', description: 'Deep dives into everyday elements, chemical warfare history, and radioactive isotopes.', videoCount: 84 },
     // 500k - 2M
     { id: 'sci_13', title: 'ActionLabShorts', handle: '@actionlabshorts', subscribers: 1950000, niche: 'Science', country: 'US', description: 'Mind-boggling physical experiments with vacuum chambers, aerogels, and laser cutters.', videoCount: 310 },
@@ -272,7 +271,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'edu_10', title: 'VancouverTutor', handle: '@vancouvertutor', subscribers: 62000, niche: 'Education', country: 'CA', description: 'Calculus made easy, derivative shortcuts, and linear algebra visual intuition.', videoCount: 70 },
     // 100k - 500k
     { id: 'edu_11', title: 'JustinSung', handle: '@justinsung', subscribers: 420000, niche: 'Education', country: 'AU', description: 'Cognitive learning science, non-linear mind mapping, and overcoming rote memorization.', videoCount: 140 },
-    { id: 'edu_12', title: 'ThomasFrankShorts', handle: '@thomasfrankshorts', subscribers: 350000, niche: 'Education', country: 'US', description: 'High-speed habit building, Notion automation tricks, and daily productivity routines.', videoCount: 160 },
+    { id: 'edu_12', title: 'Thomas Frank', handle: '@Thomasfrank', subscribers: 2900000, niche: 'Education', country: 'US', description: 'Productivity systems, Notion automation templates, and habit building.', videoCount: 220 },
     // 500k - 2M
     { id: 'edu_13', title: 'OverSimplifiedClips', handle: '@oversimplifiedclips', subscribers: 1300000, niche: 'Education', country: 'US', description: 'Animated, hilariously narrated recaps of major historical conflicts and revolutions.', videoCount: 85 },
     // 2M - 10M
@@ -317,7 +316,7 @@ const CURATED_NICHE_CHANNELS = {
     { id: 'bty_06', title: 'MapleGlamour', handle: '@mapleglamour', subscribers: 7800, niche: 'Beauty', country: 'CA', description: 'Winter skin hydration routines and cruelty-free lip oil comparisons.', videoCount: 42 },
     { id: 'bty_07', title: 'SydneyGlowArt', handle: '@sydneyglowart', subscribers: 6100, niche: 'Beauty', country: 'AU', description: 'Dewy bronzed summer makeup, sweatproof foundations for humid climates.', videoCount: 38 },
     // 10k - 100k
-    { id: 'bty_08', title: 'LabMuffinClips', handle: '@labmuffinclips', subscribers: 88000, niche: 'Beauty', country: 'AU', description: 'Cosmetic chemist explains the real science behind retinol, vitamin C, and sunscreen.', videoCount: 110 },
+    { id: 'bty_08', title: 'Lisa Eldridge', handle: '@LisaEldridgeMakeup', subscribers: 2100000, niche: 'Beauty', country: 'GB', description: 'World-renowned pro makeup artist tutorials, beauty history, and red carpet looks.', videoCount: 260 },
     { id: 'bty_09', title: 'BritishMakeupArtist', handle: '@britishmakeupartist', subscribers: 67000, niche: 'Beauty', country: 'GB', description: 'Bridal makeup techniques, mature skin foundation matching, and lash lifts.', videoCount: 78 },
     { id: 'bty_10', title: 'TorontoSkincareJunkie', handle: '@torontoskincarejunkie', subscribers: 44000, niche: 'Beauty', country: 'CA', description: 'K-beauty sunscreen tests, peptide serums, and chemical peel recovery.', videoCount: 63 },
     // 100k - 500k

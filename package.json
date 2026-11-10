@@ -1,16 +1,21 @@
 {
-  "name": "yt-us-creator-filter",
+  "name": "ytcreatorfinder",
   "version": "1.0.0",
-  "description": "YouTube US Little Creator Finder & Mention Tool",
+  "private": true,
+  "description": "YTCreatorFinder - Discover YouTube Creators by Niche, Size and Country",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [
     "youtube",
     "mentions",
     "creator-finder"
   ],
-  "author": "",
+  "author": "VoiceOfHC <hasibul80801@gmail.com>",
   "license": "MIT"
 }

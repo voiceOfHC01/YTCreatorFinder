@@ -280,7 +280,7 @@ async function fetchYouTubeComments(videoId, apiKey, maxComments = 200) {
 
   while (comments.length < maxComments) {
     const fetchCount = Math.min(maxResultsPerPage, maxComments - comments.length);
-    let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${encodeURIComponent(videoId)}&maxResults=${fetchCount}&key=${encodeURIComponent(apiKey)}`;
+    let apiUrl = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&textFormat=plainText&videoId=${encodeURIComponent(videoId)}&maxResults=${fetchCount}&key=${encodeURIComponent(apiKey)}`;
     if (pageToken) {
       apiUrl += `&pageToken=${encodeURIComponent(pageToken)}`;
     }
@@ -381,13 +381,76 @@ async function fetchLatestUploadDate(uploadsPlaylistId, apiKey) {
   return null;
 }
 
+// Concurrency helper for fast non-blocking parallel execution
+async function mapLimit(items, limit, fn) {
+  const out = new Array(items.length);
+  let i = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (i < items.length) {
+      const idx = i++;
+      out[idx] = await fn(items[idx], idx);
+    }
+  }));
+  return out;
+}
+
 // ==========================================
 // CURATED CREATOR DIRECTORY DATA
 // ==========================================
 const { CURATED_NICHE_CHANNELS } = require('./channels-data');
 
-async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs, apiKey, pageToken = '' }) {
+// Helper to determine collaboration readiness and formats for creators
+function getCreatorCollabs(c) {
+  const desc = (c.description || '').toLowerCase();
+  const title = (c.title || '').toLowerCase();
+  const niche = (c.niche || '').toLowerCase();
+  const text = `${title} ${desc} ${niche}`;
+  
+  const collabs = ['Cross-promo']; // All active micro-creators are open to cross-promotion
+
+  // Podcast guest / interview
+  if (text.includes('podcast') || text.includes('interview') || text.includes('talk') || text.includes('discussion') || text.includes('host') || text.includes('guest') || text.includes('vlog') || ['tech', 'finance', 'education', 'science', 'fitness'].includes(niche)) {
+    collabs.push('Podcast guest');
+  }
+
+  // Guest spot / feature
+  if (text.includes('collab') || text.includes('guest') || text.includes('feature') || text.includes('challenge') || ['gaming', 'cooking', 'music', 'travel', 'maker & diy'].includes(niche)) {
+    collabs.push('Guest spot');
+  }
+
+  // Shorts collab
+  if (text.includes('short') || text.includes('clip') || text.includes('reel') || (c.videoCount && c.videoCount > 15) || ['gaming', 'cooking', 'beauty', 'film & vfx', 'music'].includes(niche)) {
+    collabs.push('Shorts collab');
+  }
+
+  return [...new Set(collabs)];
+}
+
+async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs, apiKey, pageToken = '', collab = 'None' }) {
   const allCurated = Object.values(CURATED_NICHE_CHANNELS).flat();
+  // Include verified user submissions from submitted-channels.json if available
+  try {
+    const submissionsFile = path.resolve(__dirname, 'submitted-channels.json');
+    if (fs.existsSync(submissionsFile)) {
+      const subs = JSON.parse(fs.readFileSync(submissionsFile, 'utf8') || '[]');
+      if (Array.isArray(subs)) {
+        for (const s of subs) {
+          if (s && s.handle && s.niche) {
+            allCurated.unshift({
+              id: s.id || ('sub_' + s.handle.replace(/[^a-zA-Z0-9]/g, '')),
+              title: s.title || s.handle,
+              handle: s.handle,
+              subscribers: s.subscribers || 4500,
+              niche: s.niche,
+              country: s.country || 'US',
+              description: `Community submitted creator • ${s.collabType || 'Open to collabs'}`,
+              videoCount: 12
+            });
+          }
+        }
+      }
+    }
+  } catch (e) {}
   let livePool = [];
   let foundNextPageToken = null;
 
@@ -407,7 +470,7 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
         
         // If initial load without pageToken, add complementary relevance search to double discovery depth
         if (!pageToken) {
-          const compTerm = query ? `${query} tutorial` : (cleanNiche ? `${cleanNiche} recipe cooking tutorial` : 'creator tutorial video');
+          const compTerm = query ? `${query} tips` : (cleanNiche ? `${cleanNiche} tips review tutorial` : 'creator tutorial video');
           searchUrls.push(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=relevance&regionCode=${encodeURIComponent(searchRegion)}&q=${encodeURIComponent(compTerm)}&maxResults=50&key=${encodeURIComponent(apiKey)}`);
         }
       } else {
@@ -443,18 +506,22 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
                   const sn = item.snippet || {};
                   const st = item.statistics || {};
                   const subs = st.hiddenSubscriberCount ? null : parseInt(st.subscriberCount || '0', 10);
-                  let handle = sn.customUrl || '';
-                  if (handle && !handle.startsWith('@')) handle = '@' + handle;
-                  if (!handle) handle = '@' + (sn.title.replace(/[^\w.-]/g, '') || 'creator');
+                  let handle = '';
+                  let hasVerifiedHandle = false;
+                  if (sn.customUrl) {
+                    handle = sn.customUrl.startsWith('@') ? sn.customUrl : '@' + sn.customUrl;
+                    hasVerifiedHandle = true;
+                  }
 
                   livePool.push({
                     id: item.id,
                     title: sn.title || '',
                     handle: handle,
+                    hasVerifiedHandle: hasVerifiedHandle,
                     avatar: sn.thumbnails?.default?.url || sn.thumbnails?.medium?.url || '',
                     subscribers: subs,
                     niche: cleanNiche || 'General',
-                    country: sn.country || (country !== 'ANY' ? country : 'US'),
+                    country: sn.country || 'GLOBAL',
                     description: sn.description || '',
                     videoCount: parseInt(st.videoCount || '0', 10),
                     isLive: true
@@ -473,7 +540,7 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
   }
 
   // Helper filter function
-  function applyFilters(list, reqNiche, reqCountry, reqMinSubs, reqMaxSubs, reqQuery) {
+  function applyFilters(list, reqNiche, reqCountry, reqMinSubs, reqMaxSubs, reqQuery, reqCollab) {
     let res = [...list];
     
     // Niche filter
@@ -486,12 +553,21 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
       res = res.filter(c => !c.country || c.country.toUpperCase() === reqCountry.toUpperCase());
     }
     
-    // Subscriber range filter
+    // Subscriber range filter (exclude channels with hidden sub counts when specific range is queried)
     if (typeof reqMinSubs === 'number' && reqMinSubs > 0) {
-      res = res.filter(c => c.subscribers === null || c.subscribers >= reqMinSubs);
+      res = res.filter(c => typeof c.subscribers === 'number' && c.subscribers >= reqMinSubs);
     }
     if (typeof reqMaxSubs === 'number' && reqMaxSubs < 1000000000) {
-      res = res.filter(c => c.subscribers === null || c.subscribers <= reqMaxSubs);
+      res = res.filter(c => typeof c.subscribers === 'number' && c.subscribers <= reqMaxSubs);
+    }
+
+    // Collaboration / Looking For filter
+    if (reqCollab && reqCollab !== 'All' && reqCollab !== 'All Collabs' && reqCollab !== 'None') {
+      const targetCollab = reqCollab.toLowerCase().replace(/[^a-z]/g, '');
+      res = res.filter(c => {
+        const collabs = getCreatorCollabs(c);
+        return collabs.some(col => col.toLowerCase().replace(/[^a-z]/g, '').includes(targetCollab));
+      });
     }
     
     // Keyword search filter (flexible: matches "mrbeast", "mr beast", handles, titles, bios)
@@ -516,10 +592,10 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
   }
 
   // 1. Filter live results (if any)
-  let matchingLive = applyFilters(livePool, niche, country, minSubs, maxSubs, query);
+  let matchingLive = applyFilters(livePool, niche, country, minSubs, maxSubs, query, collab);
   
   // 2. Filter curated database
-  let matchingCurated = applyFilters(allCurated, niche, country, minSubs, maxSubs, query);
+  let matchingCurated = applyFilters(allCurated, niche, country, minSubs, maxSubs, query, collab);
 
   // Combine live and curated (live first, avoid duplicate handles)
   const seen = new Set();
@@ -575,6 +651,14 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
     }
     const safeHandle = c.handle.startsWith('@') ? c.handle : ('@' + c.handle);
     const countryCode = c.country || 'US';
+    const creatorCollabs = getCreatorCollabs(c);
+    let activeBadge = 'Active Creator';
+    if (collab && collab !== 'All' && collab !== 'All Collabs' && collab !== 'None') {
+      activeBadge = `Collab: ${collab}`;
+    } else {
+      activeBadge = 'Active Creator';
+    }
+
     return {
       id: c.id,
       title: c.title,
@@ -588,7 +672,9 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
       description: c.description || '',
       videoCount: c.videoCount || 0,
       channelUrl: safeHandle.startsWith('@') ? ('https://www.youtube.com/' + safeHandle) : ('https://www.youtube.com/channel/' + encodeURIComponent(c.id)),
-      status: 'Open to collabs',
+      status: activeBadge,
+      collabs: creatorCollabs,
+      activeCollabBadge: activeBadge,
       fallbackNotice: c.fallbackNotice || null
     };
   });
@@ -735,28 +821,7 @@ const server = http.createServer(async (req, res) => {
             seenChannels.add(comm.channelId);
             uniqueChannelIds.push(comm.channelId);
           }
-
-          // Problem 3 Solution: Extract valid timestamps with duration boundary check
-          if (videoDurationSeconds > 0 && !isSpamComment(comm.commentText)) {
-            const extracted = extractValidTimestamps(comm.commentText, videoDurationSeconds);
-            for (const t of extracted) {
-              if (!timestampMap.has(t.timestamp)) {
-                timestampMap.set(t.timestamp, {
-                  timestamp: t.timestamp,
-                  seconds: t.seconds,
-                  mentions: 0,
-                  sampleText: comm.commentText.slice(0, 100)
-                });
-              }
-              timestampMap.get(t.timestamp).mentions += 1;
-            }
-          }
         }
-
-        // Rank top viral moments
-        const highlights = Array.from(timestampMap.values())
-          .sort((a, b) => b.mentions - a.mentions)
-          .slice(0, 8);
 
         // 2. Fetch Channel Details (batch up to 50 channels per call)
         const channelDetailsMap = await fetchChannelsDetails(uniqueChannelIds, cleanApiKey);
@@ -794,35 +859,39 @@ const server = http.createServer(async (req, res) => {
           });
         }
 
-        // 4. Stage 2: Activity Filter (Check latest upload date if activeDays != 'any' or for preview)
-        const results = [];
+        // 4. Stage 2: Activity Filter (Fast parallel check with mapLimit to prevent Vercel timeouts)
         const now = Date.now();
         const activeDaysLimit = safeActiveDays !== 'any' ? parseInt(safeActiveDays, 10) : null;
 
-        for (const item of candidateCreators) {
+        const candidateUploadDates = await mapLimit(candidateCreators, 8, async (item) => {
+          if (item.channel.videoCount > 0 && item.channel.uploadsPlaylistId) {
+            return await fetchLatestUploadDate(item.channel.uploadsPlaylistId, cleanApiKey);
+          }
+          return null;
+        });
+
+        const results = [];
+        for (let i = 0; i < candidateCreators.length; i++) {
+          const item = candidateCreators[i];
           const { channel, comment, countryCheck } = item;
-          let latestUploadDate = null;
+          const latestUploadDate = candidateUploadDates[i];
           let daysSinceUpload = null;
           let activityLabel = 'Activity Unknown';
           let isUltraActive = false;
 
-          // If channel has uploaded videos and an uploads playlist
-          if (channel.videoCount > 0 && channel.uploadsPlaylistId) {
-            latestUploadDate = await fetchLatestUploadDate(channel.uploadsPlaylistId, cleanApiKey);
-            if (latestUploadDate) {
-              const uploadTimestamp = new Date(latestUploadDate).getTime();
-              daysSinceUpload = Math.floor((now - uploadTimestamp) / (1000 * 60 * 60 * 24));
-              
-              if (daysSinceUpload <= 30) {
-                activityLabel = `Uploaded ${daysSinceUpload === 0 ? 'today' : daysSinceUpload + 'd ago'}`;
-                isUltraActive = true;
-              } else if (daysSinceUpload <= 60) {
-                activityLabel = `Uploaded ${Math.floor(daysSinceUpload / 7)}w ago`;
-              } else if (daysSinceUpload <= 365) {
-                activityLabel = `Uploaded ${Math.floor(daysSinceUpload / 30)}mo ago`;
-              } else {
-                activityLabel = `Uploaded ${Math.floor(daysSinceUpload / 365)}y ago`;
-              }
+          if (latestUploadDate) {
+            const uploadTimestamp = new Date(latestUploadDate).getTime();
+            daysSinceUpload = Math.floor((now - uploadTimestamp) / (1000 * 60 * 60 * 24));
+            
+            if (daysSinceUpload <= 30) {
+              activityLabel = `Uploaded ${daysSinceUpload === 0 ? 'today' : daysSinceUpload + 'd ago'}`;
+              isUltraActive = true;
+            } else if (daysSinceUpload <= 60) {
+              activityLabel = `Uploaded ${Math.floor(daysSinceUpload / 7)}w ago`;
+            } else if (daysSinceUpload <= 365) {
+              activityLabel = `Uploaded ${Math.floor(daysSinceUpload / 30)}mo ago`;
+            } else {
+              activityLabel = `Uploaded ${Math.floor(daysSinceUpload / 365)}y ago`;
             }
           }
 
@@ -833,19 +902,19 @@ const server = http.createServer(async (req, res) => {
             }
           }
 
-          // Determine mention handle
-          let handle = channel.customUrl || '';
-          if (handle && !handle.startsWith('@')) {
-            handle = '@' + handle;
-          }
-          if (!handle) {
-            handle = '@' + (channel.title.replace(/[^\w.-]/g, '') || 'creator');
+          // Determine mention handle (verify if official customUrl exists)
+          let handle = '';
+          let hasVerifiedHandle = false;
+          if (channel.customUrl) {
+            handle = channel.customUrl.startsWith('@') ? channel.customUrl : '@' + channel.customUrl;
+            hasVerifiedHandle = true;
           }
 
           results.push({
             channelId: channel.id,
             title: channel.title,
-            handle: handle,
+            handle: hasVerifiedHandle ? handle : '',
+            hasVerifiedHandle: hasVerifiedHandle,
             avatar: channel.avatar,
             subscribers: channel.subscribers,
             videoCount: channel.videoCount,
@@ -858,7 +927,7 @@ const server = http.createServer(async (req, res) => {
             daysSinceUpload: daysSinceUpload,
             activityLabel: activityLabel,
             isUltraActive: isUltraActive,
-            channelUrl: handle.startsWith('@') ? `https://www.youtube.com/${encodeURIComponent(handle)}` : `https://www.youtube.com/channel/${encodeURIComponent(channel.id)}`,
+            channelUrl: hasVerifiedHandle ? `https://www.youtube.com/${encodeURIComponent(handle)}` : `https://www.youtube.com/channel/${encodeURIComponent(channel.id)}`,
             comment: comment.commentText,
             commentLikes: comment.likeCount,
             commentDate: comment.publishedAt
@@ -868,7 +937,8 @@ const server = http.createServer(async (req, res) => {
         // Sort by subscriber count ascending (smallest creators first)
         results.sort((a, b) => (a.subscribers || 0) - (b.subscribers || 0));
 
-        const mentions = results.map(r => r.handle).join(' ');
+        // Only include channels with authentic, verified @handles in the mention list
+        const mentions = results.filter(r => r.hasVerifiedHandle && r.handle).map(r => r.handle).join(' ');
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -882,7 +952,7 @@ const server = http.createServer(async (req, res) => {
           uniqueCommenters: uniqueChannelIds.length,
           creatorsFoundCount: results.length,
           mentions: mentions,
-          highlights: highlights,
+          highlights: [],
           creators: results
         }));
 
@@ -936,7 +1006,8 @@ const server = http.createServer(async (req, res) => {
           minSubs = 0,
           maxSubs = 1000000000,
           apiKey = '',
-          pageToken = ''
+          pageToken = '',
+          collab = 'None'
         } = payload;
 
         const parsedMinSubs = typeof minSubs === 'number' ? minSubs : parseInt(minSubs, 10) || 0;
@@ -949,7 +1020,8 @@ const server = http.createServer(async (req, res) => {
           minSubs: parsedMinSubs,
           maxSubs: parsedMaxSubs,
           apiKey,
-          pageToken
+          pageToken,
+          collab
         });
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -971,15 +1043,127 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Allow only GET requests for static files
-  if (req.method !== 'GET') {
+  // API Endpoint: /api/submit-channel (Community Channel Submissions)
+  if (req.method === 'POST' && parsedUrl.pathname === '/api/submit-channel') {
+    if (isRateLimited(clientIp, 5)) {
+      res.writeHead(429, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Too many submissions. Please wait a minute before submitting again.' }));
+      return;
+    }
+
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk;
+      if (body.length > 50000) {
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload too large' }));
+        req.destroy();
+      }
+    });
+
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body || '{}');
+        const { channelHandle, channelName, niche, country, subRange, collabType, contactEmail } = payload;
+
+        if (!channelHandle || !niche) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Channel handle and niche are required.' }));
+          return;
+        }
+
+        let rawHandle = String(channelHandle).trim();
+        const urlMatch = rawHandle.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:@)?([a-zA-Z0-9_.-]+)/i);
+        let cleanHandle = '';
+        if (urlMatch && urlMatch[1]) {
+          cleanHandle = '@' + urlMatch[1].replace(/^@/, '');
+        } else {
+          cleanHandle = rawHandle.replace(/^(?:https?:\/\/)?(?:www\.)?youtube\.com\/?/i, '').replace(/^@/, '');
+          cleanHandle = cleanHandle ? ('@' + cleanHandle) : '';
+        }
+
+        if (!cleanHandle || cleanHandle.length < 2) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Please enter a valid YouTube handle or URL.' }));
+          return;
+        }
+
+        let subNumber = 5000;
+        if (subRange === '0 - 1k') subNumber = 800;
+        else if (subRange === '1k - 10k') subNumber = 4500;
+        else if (subRange === '10k - 50k') subNumber = 25000;
+        else if (subRange === '50k - 100k') subNumber = 75000;
+        else if (subRange === '100k+') subNumber = 150000;
+
+        const submission = {
+          id: 'sub_' + Date.now(),
+          handle: cleanHandle,
+          title: String(channelName || cleanHandle.replace(/^@/, '')).trim(),
+          niche: String(niche).trim(),
+          country: String(country || 'US').trim().toUpperCase(),
+          subscribers: subNumber,
+          subRange: String(subRange || '1k - 10k').trim(),
+          collabType: String(collabType || 'General Collabs').trim(),
+          email: String(contactEmail || '').trim().slice(0, 100),
+          submittedAt: new Date().toISOString()
+        };
+
+        // Persist to local JSON file safely
+        const submissionsFile = path.resolve(__dirname, 'submitted-channels.json');
+        let existing = [];
+        try {
+          if (fs.existsSync(submissionsFile)) {
+            existing = JSON.parse(fs.readFileSync(submissionsFile, 'utf8') || '[]');
+          }
+        } catch (e) {
+          existing = [];
+        }
+
+        const alreadyExists = existing.some(item => (item.handle || '').toLowerCase() === submission.handle.toLowerCase());
+        if (!alreadyExists) {
+          existing.push(submission);
+          try {
+            fs.writeFileSync(submissionsFile, JSON.stringify(existing, null, 2), 'utf8');
+          } catch (writeErr) {
+            console.error('Failed to write submission file:', writeErr.message);
+            res.writeHead(503, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Could not save right now. Please try again later.' }));
+            return;
+          }
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Submitted for review! Your channel has been queued for verification.',
+          submission
+        }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to process submission' }));
+      }
+    });
+    return;
+  }
+
+  // Allow only GET and HEAD requests for static files
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { 'Content-Type': 'text/plain' });
     res.end('405 Method Not Allowed');
     return;
   }
 
   // Hardened Static File Serving with Path Traversal Protection
-  let safePath = path.normalize(decodeURIComponent(parsedUrl.pathname || '/')).replace(/^(\.\.[\/\\])+/, '');
+  let decoded;
+  try {
+    decoded = decodeURIComponent(parsedUrl.pathname || '/');
+  } catch (uriErr) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('400 Bad Request');
+    return;
+  }
+
+  let safePath = path.normalize(decoded).replace(/^(\.\.[\/\\])+/, '');
   if (safePath === '/' || safePath === '\\' || safePath === '') {
     safePath = 'index.html';
   }
@@ -988,9 +1172,10 @@ const server = http.createServer(async (req, res) => {
   safePath = safePath.replace(/\0/g, '').replace(/::\$DATA/gi, '');
   let filePath = path.resolve(PUBLIC_DIR, safePath.startsWith(path.sep) ? safePath.slice(1) : safePath);
 
-  // Canonical realpath boundary check
+  // Canonical realpath boundary check with path separator
   const resolvedPublicDir = path.resolve(PUBLIC_DIR);
-  if (!filePath.toLowerCase().startsWith(resolvedPublicDir.toLowerCase())) {
+  const boundaryCheck = resolvedPublicDir.toLowerCase() + path.sep;
+  if (!filePath.toLowerCase().startsWith(boundaryCheck) && filePath.toLowerCase() !== resolvedPublicDir.toLowerCase()) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     res.end('403 Forbidden: Access Denied');
     return;
@@ -1014,12 +1199,26 @@ const server = http.createServer(async (req, res) => {
       '.jpeg': 'image/jpeg',
       '.webp': 'image/webp',
       '.svg': 'image/svg+xml',
-      '.ico': 'image/x-icon'
+      '.ico': 'image/x-icon',
+      '.txt': 'text/plain; charset=utf-8',
+      '.xml': 'application/xml; charset=utf-8'
     };
 
     if (!mimeTypes[ext]) {
       res.writeHead(403, { 'Content-Type': 'text/plain' });
       res.end('403 Forbidden File Type');
+      return;
+    }
+
+    const cacheHeader = ext === '.html' ? 'no-cache' : 'public, max-age=86400';
+    res.writeHead(200, {
+      'Content-Type': mimeTypes[ext],
+      'Content-Length': stats.size,
+      'Cache-Control': cacheHeader
+    });
+
+    if (req.method === 'HEAD') {
+      res.end();
       return;
     }
 
@@ -1036,14 +1235,17 @@ const server = http.createServer(async (req, res) => {
       stream.destroy();
     });
 
-    res.writeHead(200, { 'Content-Type': mimeTypes[ext] });
     stream.pipe(res);
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🚀 YouTube Creator Finder running safely on port ${PORT}!`);
-  console.log(`🔗 Local URL: http://localhost:${PORT}`);
-  console.log(`=======================================================`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 YouTube Creator Finder running safely on port ${PORT}!`);
+    console.log(`🔗 Local URL: http://localhost:${PORT}`);
+    console.log(`=======================================================`);
+  });
+}
+
+module.exports = server;

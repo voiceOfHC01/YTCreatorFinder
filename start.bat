@@ -1,8 +1,9 @@
 @echo off
-title YouTube US Little Creator Finder
+title YTCreatorFinder
+cd /d "%~dp0"
 echo =======================================================
-echo Starting YouTube US Little Creator Finder...
+echo Starting YTCreatorFinder on http://localhost:3000...
 echo =======================================================
-start http://localhost:3000
+start "" cmd /c "timeout /t 2 /nobreak >nul & start http://localhost:3000"
 node server.js
 pause

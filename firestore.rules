@@ -1,0 +1,141 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: channel_submissions
+    // Document ID: [auto-generated Firestore document ID]
+    //
+    // Fields:
+    //   - handle: string (required, 1..100 chars, e.g. '@mkbhd' or 'mkbhd') - YouTube channel identifier
+    //   - niche: string (required, 2..50 chars, e.g. 'tech', 'gaming', 'finance', 'education', 'lifestyle', 'crypto', 'fitness') - Primary content niche
+    //   - reason: string (optional, 0..500 chars) - Pitch, description, or notes
+    //   - contact: string (optional, 0..100 chars) - Submitter contact handle or email
+    //   - submittedAt: timestamp (required, immutable) - Must equal request.time via FieldValue.serverTimestamp()
+    //   - status: string (required) - Moderation status: 'pending' on creation, 'approved' | 'rejected' on admin update
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the request is from an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the authenticated user has an admin custom claim, admin role, or verified owner email
+    function isAdmin() {
+      return isAuthenticated() &&
+        (request.auth.token.get('admin', false) == true ||
+         request.auth.token.get('role', '') == 'admin' ||
+         request.auth.token.email == 'hasibul80801@gmail.com');
+    }
+
+    // Verify document contains all mandatory fields
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // Strict schema protection: document must NOT contain any unauthorized fields
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Validate required string field bounds (prevents 1MB DoS / resource exhaustion attacks)
+    function validStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+
+    // Validate optional string field bounds (if present, must be string within limits)
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+        (request.resource.data[field] is string &&
+         request.resource.data[field].size() >= minLen &&
+         request.resource.data[field].size() <= maxLen);
+    }
+
+    // Verify immutable fields are never altered during updates
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    // Comprehensive validator for new channel submissions (create)
+    function isValidSubmission(data) {
+      return hasOnlyAllowedFields(['handle', 'niche', 'reason', 'contact', 'submittedAt', 'status']) &&
+        hasRequiredFields(['handle', 'niche', 'submittedAt', 'status']) &&
+        validStringLength('handle', 1, 100) &&
+        validStringLength('niche', 2, 50) &&
+        isValidOptionalString('reason', 0, 500) &&
+        isValidOptionalString('contact', 0, 100) &&
+        data.submittedAt is timestamp &&
+        data.submittedAt == request.time &&
+        data.status is string &&
+        data.status == 'pending';
+    }
+
+    // Comprehensive validator for submission updates (admin only)
+    function isValidSubmissionUpdate(data) {
+      return hasOnlyAllowedFields(['handle', 'niche', 'reason', 'contact', 'submittedAt', 'status']) &&
+        hasRequiredFields(['handle', 'niche', 'submittedAt', 'status']) &&
+        areImmutableFieldsUnchanged(['handle', 'submittedAt']) &&
+        validStringLength('niche', 2, 50) &&
+        isValidOptionalString('reason', 0, 500) &&
+        isValidOptionalString('contact', 0, 100) &&
+        data.status is string &&
+        data.status in ['pending', 'approved', 'rejected'];
+    }
+
+    // ===============================================================
+    // Collection Rules: channel_submissions
+    // ===============================================================
+    match /channel_submissions/{submissionId} {
+      // 1. PUBLIC CREATE:
+      // Allow unauthenticated visitors to submit their YouTube channel.
+      // Enforces strict schema, field size limits, server timestamp, and default 'pending' status.
+      allow create: if isValidSubmission(request.resource.data);
+
+      // 2. READ ACCESS:
+      // Client-side public can read approved channels for public catalog/directory display.
+      // Admins can read all submissions (pending, approved, rejected) for moderation.
+      // NOTE: Queries by public clients must explicitly include `where('status', '==', 'approved')`.
+      allow read: if (resource.data.status == 'approved') || isAdmin();
+
+      // 3. UPDATE ACCESS:
+      // Disallow public updates to prevent vandalism, unauthorized status changes, or data tampering.
+      // Only authorized administrators can update (e.g. approve/reject status).
+      allow update: if isAdmin() && isValidSubmissionUpdate(request.resource.data);
+
+      // 4. DELETE ACCESS:
+      // Disallow public deletion. Only administrators can prune or remove submissions.
+      allow delete: if isAdmin();
+    }
+
+    // ===============================================================
+    // Collection Rules: users/{userId}/saved_creators
+    // ===============================================================
+    match /users/{userId}/saved_creators/{bookmarkId} {
+      // Authenticated users can manage their own saved creators / bookmarks
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ===============================================================
+    // Root Default Deny
+    // ===============================================================
+    // Deny all reads and writes to all other collections and subcollections by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

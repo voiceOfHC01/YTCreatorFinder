@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CreatorScout - Discover YouTube Creators by Niche & Size</title>
-  <meta name="description" content="Discover active Tier-1 YouTube micro-creators by niche, subscriber size, and country — or scan video comments for timestamps and safe mentions.">
+  <title>YTCreatorFinder - Discover YouTube Creators by Niche &amp; Size</title>
+  <meta name="description" content="Discover active Tier-1 YouTube micro-creators by niche, subscriber size, and country. Connect, collaborate, and grow with YTCreatorFinder.">
+  <link rel="canonical" href="https://ytcreatorfinder.xyz/">
+  <meta property="og:title" content="YTCreatorFinder - Discover YouTube Creators by Niche & Size">
+  <meta property="og:description" content="Discover active Tier-1 YouTube micro-creators by niche, subscriber size, and country. Connect, collaborate, and grow with YTCreatorFinder.">
+  <meta property="og:url" content="https://ytcreatorfinder.xyz/">
+  <meta property="og:type" content="website">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="alternate icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/logo.png">
@@ -56,39 +61,66 @@
     }
 
     html.dark {
-      /* Dark / Black Mode Palette */
-      --bg-page: #0a0b0a;
-      --bg-surface: #131615;
-      --bg-surface-hover: #191d1c;
-      --bg-pill: #171b19;
-      --bg-pill-hover: #202623;
-      --bg-pill-active: #f3f7f5;
-      --text-pill-active: #0a0b0a;
-      --bg-banner: #13241f;
-      --text-banner: #a7f3d0;
-      --border-color: #242b28;
-      --border-subtle: #1c221f;
-      --text-primary: #f3f7f5;
-      --text-secondary: #b8ccc4;
-      --text-muted: #7b938a;
-      --accent-btn: #387563;
-      --accent-btn-hover: #458d78;
+      /* Dark Obsidian & Violet Aura (Reference Inspired) */
+      --bg-page: #08080d;
+      --bg-surface: #0f1018;
+      --bg-surface-hover: #161824;
+      --bg-pill: #131420;
+      --bg-pill-hover: #1c1e2e;
+      --bg-pill-active: #ffffff;
+      --text-pill-active: #08080d;
+      --bg-banner: #19142e;
+      --text-banner: #c4b5fd;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-btn: #7c3aed;
+      --accent-btn-hover: #6d28d9;
       --accent-btn-text: #ffffff;
-      --input-bg: #131615;
-      --input-border: #242b28;
-      --card-border: #242b28;
-      --card-hover-border: #333d39;
-      --tag-collab-bg: #12281a;
-      --tag-collab-text: #34d399;
-      --tag-collab-border: #1b3d27;
-      --marker-bg: #4a3e1c;
-      --marker-border: rgba(245, 158, 11, 0.22);
+      --input-bg: #0f1018;
+      --input-border: rgba(255, 255, 255, 0.1);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(139, 92, 246, 0.4);
+      --tag-collab-bg: rgba(124, 58, 237, 0.15);
+      --tag-collab-text: #a78bfa;
+      --tag-collab-border: rgba(139, 92, 246, 0.25);
+      --marker-bg: rgba(124, 58, 237, 0.25);
+      --marker-border: rgba(167, 139, 250, 0.4);
       --marker-text: #ffffff;
       --timestamp-bg: #433716;
       --timestamp-text: #fcd34d;
       --timestamp-border: rgba(245, 158, 11, 0.35);
-      --modal-overlay: rgba(0, 0, 0, 0.75);
-      --code-bg: #0d0f0e;
+      --modal-overlay: rgba(0, 0, 0, 0.8);
+      --code-bg: #0b0c13;
+    }
+
+    /* Ambient Glow Effects (Matching Akko Reference) */
+    .hero-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1100px;
+      height: 480px;
+      background: radial-gradient(ellipse 65% 380px at 50% 0%, rgba(124, 58, 237, 0.24), rgba(79, 70, 229, 0.08), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bottom-cta-glow {
+      background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.24) 0%, rgba(15, 16, 24, 0.98) 75%);
+    }
+    .ref-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ref-card:hover {
+      border-color: var(--card-hover-border);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(124, 58, 237, 0.12);
     }
 
     body {
@@ -194,8 +226,13 @@
       background: var(--text-muted);
     }
   </style>
+  <!-- Firebase Cloud App, Firestore & Auth SDKs (Compat CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+  <div class="hero-glow"></div>
 
   <!-- ========================================== -->
   <!-- TOP NAVBAR                                 -->
@@ -206,24 +243,30 @@
       <!-- Left: Logo & Mode Tabs -->
       <div class="flex items-center space-x-3 sm:space-x-4">
         <a href="#" class="font-bold text-xl tracking-tight flex items-center space-x-2.5" style="color: var(--text-primary);">
-          <img src="/logo.png" alt="CreatorScout" class="w-8 h-8 rounded-full shrink-0 shadow-sm object-cover">
-          <span>CreatorScout</span>
+          <img src="/logo.png" alt="YTCreatorFinder" class="w-8 h-8 rounded-full shrink-0 shadow-sm object-cover">
+          <span>YTCreatorFinder</span>
         </a>
         <span style="color: var(--border-color);">|</span>
 
-        <!-- Discover vs URL Scout Mode Switcher -->
+        <!-- Find vs Discover Mode Switcher -->
         <div class="flex items-center p-0.5 rounded-full border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
-          <button id="navDiscoverBtn" class="px-3.5 py-1 rounded-full text-xs font-bold transition cursor-pointer" style="background-color: var(--bg-surface); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
-            Discover
+          <button id="navScoutBtn" class="px-3.5 py-1 rounded-full text-xs font-bold transition cursor-pointer" style="background-color: var(--bg-surface); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+            Find
           </button>
-          <button id="navScoutBtn" class="px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer" style="color: var(--text-muted);">
-            URL Scout
+          <button id="navDiscoverBtn" class="px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer" style="color: var(--text-muted);">
+            Discover
           </button>
         </div>
 
         <button id="toggleApiSettingsBtn" class="text-xs font-medium transition flex items-center space-x-1 cursor-pointer ml-1" style="color: var(--text-muted);">
           <span id="apiStatusBadge">API Key</span>
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </button>
+
+        <!-- Submit Channel CTA Button -->
+        <button onclick="openModal('submitChannelModal')" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold transition cursor-pointer" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; box-shadow: 0 1px 3px rgba(16,185,129,0.3);">
+          <span>+ Add Channel</span>
+          <span class="text-[9px] uppercase tracking-wider bg-white/25 px-1.5 py-0.2 rounded-full font-bold">Free</span>
         </button>
       </div>
 
@@ -254,6 +297,44 @@
             <!-- Icon injected by JS -->
           </span>
         </button>
+
+        <!-- Auth Container (Sign In button OR User Profile dropdown) -->
+        <div id="authNavContainer" class="flex items-center">
+          <button id="openAuthModalBtn" onclick="openAuthModal('signin')" class="text-xs font-semibold px-3 py-1.5 rounded-xl border transition cursor-pointer flex items-center space-x-1.5" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span>Sign In</span>
+          </button>
+          
+          <div id="userProfileDropdown" class="hidden relative">
+            <button id="userProfileBtn" onclick="toggleUserDropdown()" class="text-xs font-semibold px-2.5 py-1.5 rounded-xl border transition cursor-pointer flex items-center space-x-2" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+              <div class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold" id="userInitial">U</div>
+              <span id="userEmailLabel" class="max-w-[85px] sm:max-w-[110px] truncate">user@email.com</span>
+              <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            
+            <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-48 rounded-2xl shadow-xl border py-1.5 z-50 text-xs" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+              <div class="px-3 py-2 border-b" style="border-color: var(--border-color);">
+                <div class="font-semibold truncate" style="color: var(--text-primary);" id="dropdownUserEmail">user@email.com</div>
+                <div class="text-[10px] text-emerald-500 font-medium">Free Member</div>
+              </div>
+              <button onclick="openModal('savedCreatorsModal'); toggleUserDropdown(false);" class="w-full text-left px-3 py-2 flex items-center space-x-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer" style="color: var(--text-secondary);">
+                <svg class="w-3.5 h-3.5 text-amber-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <span>Saved Creators (<span id="savedCountBadge">0</span>)</span>
+              </button>
+              <button id="adminPanelNavBtn" onclick="openAdminModal(); toggleUserDropdown(false);" class="hidden w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer text-emerald-400 border-t" style="border-color: var(--border-color);">
+                <div class="flex items-center space-x-2">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  <span>Admin Review</span>
+                </div>
+                <span id="pendingSubmissionsBadge" class="text-[10px] px-1.5 py-0.2 rounded-full font-bold bg-amber-500/20 text-amber-400">0</span>
+              </button>
+              <button onclick="signOutUser(); toggleUserDropdown(false);" class="w-full text-left px-3 py-2 flex items-center space-x-2 text-rose-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer border-t" style="border-color: var(--border-color);">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <button onclick="openModal('contactModal')" class="hidden md:flex text-xs font-medium transition items-center space-x-1.5 cursor-pointer" style="color: var(--text-muted);">
           <svg class="w-3.5 h-3.5 text-[#e14b4b] fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -301,215 +382,39 @@
   <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
     <!-- ======================================================== -->
-    <!-- VIEW 1: DISCOVER DIRECTORY (MATCHING COLLYDE INSPIRATION) -->
+    <!-- VIEW 1: URL SCOUT (THE VIDEO COMMENT SCANNER TOOL)       -->
     <!-- ======================================================== -->
-    <div id="discoverViewSection">
+    <div id="scoutViewSection">
       
-      <!-- Directory Hero Header -->
-      <div class="mb-6">
-        <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-2 border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
-          The Directory
-        </span>
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight" style="color: var(--text-primary);">
-          Discover
+      <!-- HERO SECTION (MATCHING REFERENCE AESTHETICS) -->
+      <div class="relative text-center pt-6 pb-8 max-w-4xl mx-auto">
+        <!-- Floating Pill Tag -->
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-5 border transition" style="background-color: var(--bg-pill); border-color: var(--card-hover-border); color: #c4b5fd;">
+          <span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
+          <span>Tier-1 YouTube Micro-Creator Discovery</span>
+        </div>
+
+        <!-- Big Bold Title with Gradient Highlight -->
+        <h1 class="text-3xl sm:text-6xl font-extrabold tracking-tight leading-[1.15]" style="color: var(--text-primary);">
+          Where YouTube Creators Meet <br class="hidden sm:inline">
+          <span class="bg-gradient-to-r from-violet-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">Authentic Growth</span>
         </h1>
-        <p class="text-sm mt-1.5 max-w-2xl leading-relaxed" style="color: var(--text-secondary);">
-          Bigger channels spin above the middle, smaller ones below, largest first &mdash; browse creators by niche and subscriber size direct from YouTube data.
-        </p>
-      </div>
 
-      <!-- Subtle Collyde-style Banner -->
-      <div class="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 transition border" style="background-color: var(--bg-banner); color: var(--text-banner); border-color: var(--border-color);">
-        <div class="text-xs sm:text-sm font-medium leading-relaxed">
-          You are browsing as a <strong id="bannerBrowsingSize">1k – 10k creator</strong>. Verify your channel to pin it in the middle and see who is actually reachable for you.
-        </div>
-        <button onclick="openModal('proModal')" class="text-xs font-bold underline shrink-0 hover:opacity-80 transition cursor-pointer">
-          Verify &mdash; 60 seconds
-        </button>
-      </div>
-
-      <!-- Main Directory Layout: Left Sidebar Filters + Right Channels Feed -->
-      <div class="flex flex-col lg:flex-row gap-8 items-start">
-        
-        <!-- LEFT SIDEBAR: FILTERS -->
-        <aside class="w-full lg:w-72 shrink-0 rounded-2xl p-5 space-y-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-          
-          <!-- Search input -->
-          <div>
-            <div class="relative">
-              <input 
-                type="text" 
-                id="dirSearchInput" 
-                placeholder="Search channels, handles, niche..." 
-                class="w-full pl-9 pr-3 py-2 text-xs rounded-xl focus:outline-none border transition"
-                style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"
-              >
-              <svg class="w-4 h-4 absolute left-3 top-2.5" style="color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
-          </div>
-
-          <!-- Filter Section: SIZE -->
-          <div>
-            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Size (Subscribers)</h4>
-            <div class="flex flex-wrap gap-1.5" id="sizePillGroup">
-              <button type="button" class="pill-btn" data-min="0" data-max="1000000000">All</button>
-              <button type="button" class="pill-btn" data-min="0" data-max="1000">0 – 1k</button>
-              <button type="button" class="pill-btn active" data-min="1000" data-max="10000">1k – 10k</button>
-              <button type="button" class="pill-btn" data-min="10000" data-max="100000">10k – 100k</button>
-              <button type="button" class="pill-btn" data-min="100000" data-max="500000">100k – 500k</button>
-              <button type="button" class="pill-btn" data-min="500000" data-max="2000000">500k – 2M</button>
-              <button type="button" class="pill-btn" data-min="2000000" data-max="10000000">2M – 10M</button>
-              <button type="button" class="pill-btn" data-min="10000000" data-max="1000000000">10M+</button>
-            </div>
-          </div>
-
-          <!-- Filter Section: NICHE -->
-          <div>
-            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Niche</h4>
-            <div class="flex flex-wrap gap-1.5" id="nichePillGroup">
-              <button type="button" class="pill-btn" data-niche="All">All</button>
-              <button type="button" class="pill-btn active" data-niche="Tech">Tech</button>
-              <button type="button" class="pill-btn" data-niche="Gaming">Gaming</button>
-              <button type="button" class="pill-btn" data-niche="Maker & DIY">Maker & DIY</button>
-              <button type="button" class="pill-btn" data-niche="Film & VFX">Film & VFX</button>
-              <button type="button" class="pill-btn" data-niche="Music">Music</button>
-              <button type="button" class="pill-btn" data-niche="Cooking">Cooking</button>
-              <button type="button" class="pill-btn" data-niche="Fitness">Fitness</button>
-              <button type="button" class="pill-btn" data-niche="Finance">Finance</button>
-              <button type="button" class="pill-btn" data-niche="Science">Science</button>
-              <button type="button" class="pill-btn" data-niche="Education">Education</button>
-              <button type="button" class="pill-btn" data-niche="Travel">Travel</button>
-              <button type="button" class="pill-btn" data-niche="Beauty">Beauty</button>
-            </div>
-          </div>
-
-          <!-- Filter Section: LOOKING FOR -->
-          <div>
-            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Looking For</h4>
-            <div class="flex flex-wrap gap-1.5" id="collabPillGroup">
-              <button type="button" class="pill-btn active">All Collabs</button>
-              <button type="button" class="pill-btn">Cross-promo</button>
-              <button type="button" class="pill-btn">Guest spot</button>
-              <button type="button" class="pill-btn">Podcast guest</button>
-              <button type="button" class="pill-btn">Shorts collab</button>
-            </div>
-          </div>
-
-          <!-- Filter Section: REGION (Categorized High CPM / RPM Countries) -->
-          <div id="regionPillGroup" class="space-y-3 pt-1">
-            <div class="flex items-center justify-between">
-              <h4 class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--text-muted);">Region</h4>
-              <button type="button" class="pill-btn text-[11px] px-2.5 py-1" data-country="ANY">🌐 All (Global)</button>
-            </div>
-
-            <!-- North America -->
-            <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
-                <span>🌎 North America</span>
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" class="pill-btn active" data-country="US">US 🇺🇸</button>
-                <button type="button" class="pill-btn" data-country="CA">CA 🇨🇦</button>
-              </div>
-            </div>
-
-            <!-- Europe -->
-            <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
-                <span>🌍 Europe</span>
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" class="pill-btn" data-country="GB">UK 🇬🇧</button>
-                <button type="button" class="pill-btn" data-country="DE">DE 🇩🇪</button>
-                <button type="button" class="pill-btn" data-country="NO">NO 🇳🇴</button>
-                <button type="button" class="pill-btn" data-country="CH">CH 🇨🇭</button>
-                <button type="button" class="pill-btn" data-country="NL">NL 🇳🇱</button>
-                <button type="button" class="pill-btn" data-country="IE">IE 🇮🇪</button>
-                <button type="button" class="pill-btn" data-country="AT">AT 🇦🇹</button>
-                <button type="button" class="pill-btn" data-country="FR">FR 🇫🇷</button>
-                <button type="button" class="pill-btn" data-country="FI">FI 🇫🇮</button>
-                <button type="button" class="pill-btn" data-country="SE">SE 🇸🇪</button>
-              </div>
-            </div>
-
-            <!-- Asia -->
-            <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
-                <span>🌏 Asia</span>
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" class="pill-btn" data-country="SG">SG 🇸🇬</button>
-                <button type="button" class="pill-btn" data-country="AE">AE 🇦🇪</button>
-                <button type="button" class="pill-btn" data-country="JP">JP 🇯🇵</button>
-              </div>
-            </div>
-
-            <!-- Oceania -->
-            <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
-                <span>🦘 Oceania</span>
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <button type="button" class="pill-btn" data-country="AU">AU 🇦🇺</button>
-              </div>
-            </div>
-          </div>
-
-        </aside>
-
-        <!-- RIGHT MAIN FEED: CREATOR DIRECTORY CARDS -->
-        <div class="flex-1 w-full space-y-4">
-          
-          <!-- Filter status bar -->
-          <div class="flex items-center justify-between pb-2 border-b text-xs transition" style="border-color: var(--border-color); color: var(--text-secondary);">
-            <div>
-              Showing <b id="dirCountDisplay" style="color: var(--text-primary);">0</b> creators in <span id="dirActiveNicheLabel" class="font-semibold text-[#f59e0b]">Tech</span> (<span id="dirActiveSizeLabel">1k – 10k</span>)
-            </div>
-            <div class="flex items-center space-x-2">
-              <span style="color: var(--text-muted);">Order:</span>
-              <span class="font-medium" style="color: var(--text-primary);">Relevance</span>
-            </div>
-          </div>
-
-          <!-- Loading indicator -->
-          <div id="dirLoadingIndicator" class="hidden text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-7 w-7 border-2 border-t-transparent mb-2" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
-            <p class="text-xs" style="color: var(--text-muted);">Fetching creators from YouTube...</p>
-          </div>
-
-          <!-- Channel Cards Container (Matching Collyde with [Visit] button) -->
-          <div id="dirCardsContainer" class="space-y-3">
-            <!-- Dynamically populated channel cards -->
-          </div>
-
-          <!-- Load More Button -->
-          <div id="dirLoadMoreContainer" class="mt-6 text-center hidden">
-            <button id="dirLoadMoreBtn" type="button" class="px-6 py-2.5 rounded-xl font-bold text-xs transition border cursor-pointer inline-flex items-center space-x-2" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary);">
-              <span id="dirLoadMoreText">Load more creators</span>
-              <div id="dirLoadMoreSpinner" class="hidden animate-spin rounded-full h-3.5 w-3.5 border-2 border-t-transparent" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
-              <svg id="dirLoadMoreIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- VIEW 2: URL SCOUT (THE VIDEO COMMENT SCANNER TOOL)       -->
-    <!-- ======================================================== -->
-    <div id="scoutViewSection" class="hidden">
-      
-      <!-- HERO SECTION -->
-      <div class="text-center pt-4 pb-6 max-w-3xl mx-auto">
-        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight" style="color: var(--text-primary);">
-          Find YouTube <span class="marker-highlight">US/UK creators</span>
-        </h2>
+        <!-- Subtitle -->
         <p class="mt-4 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed" style="color: var(--text-secondary);">
-          Paste a video link to load its comment thread, filter active Tier-1 micro-creators by recent uploads, extract timestamp hooks, and copy @mentions.
+          Connect directly with active 1k &ndash; 10k creators across the US, UK, Canada &amp; Australia. Safe @mentions, instant channel visits, and authentic collaborations with zero spam.
         </p>
+
+        <!-- Quick Switcher CTAs -->
+        <div class="flex items-center justify-center gap-3 mt-6">
+          <button type="button" onclick="document.getElementById('navDiscoverBtn').click()" class="text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center space-x-1.5 shadow-sm" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">
+            <span>⚡ Browse 1k &ndash; 10k Directory</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+          <a href="#toolSection" class="text-xs font-semibold px-4 py-2.5 rounded-xl border transition flex items-center space-x-1.5" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+            <span>🔍 Scan Video URL Below</span>
+          </a>
+        </div>
       </div>
 
       <!-- SEARCH ROW -->
@@ -519,8 +424,8 @@
             <input 
               type="text" 
               id="videoUrlInput" 
-              placeholder="https://www.youtube.com/watch?v=..." 
-              value="https://youtu.be/38euDbuxkQY"
+              placeholder="Paste any YouTube video link (e.g. https://www.youtube.com/watch?v=...)" 
+              value=""
               class="w-full bg-transparent px-3 py-2 text-sm focus:outline-none"
               style="color: var(--text-primary);"
             >
@@ -572,9 +477,28 @@
           <span>Export CSV</span>
         </button>
 
-        <button id="toggleMoreFiltersBtn" class="text-[12px] transition underline ml-1 cursor-pointer" style="color: var(--text-muted);">
-          Options
+        <button id="toggleMoreFiltersBtn" type="button" class="filter-pill-select flex items-center space-x-1.5 cursor-pointer">
+          <span id="moreFiltersBtnText">More</span>
         </button>
+      </div>
+
+      <!-- NICHE STRIP (MATCHING PARTNER TICKER IN REFERENCE) -->
+      <div class="max-w-4xl mx-auto my-7 py-3 border-y flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-[11px] font-bold uppercase tracking-widest" style="border-color: var(--border-subtle); color: var(--text-muted);">
+        <span class="hover:text-violet-400 transition cursor-default">Tech</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Gaming</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Finance</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Education</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Lifestyle</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Crypto</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Fitness</span>
+        <span>&bull;</span>
+        <span class="hover:text-violet-400 transition cursor-default">Podcasts</span>
       </div>
 
       <!-- Hidden Advanced Controls -->
@@ -706,13 +630,6 @@
           <div id="safeBatchesContainer" class="space-y-2"></div>
         </div>
 
-        <!-- Retention Hooks & Timestamps -->
-        <div id="timestampsSection" class="hidden rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-          <h3 class="font-bold text-sm mb-1" style="color: var(--text-primary);">Retention Hooks & Timestamps</h3>
-          <p class="text-xs mb-3" style="color: var(--text-muted);">Verified timestamps from comments (false-positives eliminated). Click to copy.</p>
-          <div id="timestampsList" class="flex flex-wrap gap-2"></div>
-        </div>
-
         <!-- Raw Mentions Box -->
         <div class="rounded-2xl p-5 border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
           <div class="flex items-center justify-between mb-2">
@@ -734,85 +651,465 @@
 
       </div>
 
-      <!-- 4-Column Cards Grid for URL Scout -->
-      <div class="mb-16">
+      <!-- 4-Column Cards Grid for URL Scout (Shown after search) -->
+      <div id="scoutGridContainer" class="hidden mb-16">
         <div class="flex items-center justify-between mb-3.5 px-1">
           <h3 class="font-bold text-sm" style="color: var(--text-primary);">
-            Scouted Creators (<span id="creatorsListHeaderCount">4</span>)
+            Scouted Creators (<span id="creatorsListHeaderCount">0</span>)
           </h3>
-          <span class="text-xs" style="color: var(--text-muted);">Tier-1 micro-creators & verified timestamps</span>
+          <span class="text-xs" style="color: var(--text-muted);">Tier-1 micro-creators for collabs &amp; safe mentions</span>
         </div>
         <div id="creatorsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Dynamically populated or demo cards -->
+          <!-- Dynamically populated cards -->
         </div>
       </div>
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- 1. HOW IT WORKS SECTION                    -->
-    <!-- ========================================== -->
-    <section id="howItWorks" class="mt-20 pt-12 border-t scroll-mt-24" style="border-color: var(--border-color);">
-      <div class="text-center max-w-2xl mx-auto mb-12">
-        <h2 class="text-2xl md:text-3xl font-extrabold mb-3" style="color: var(--text-primary);">How CreatorScout Works</h2>
-        <p class="text-sm" style="color: var(--text-secondary);">Two powerful modes to discover and connect with active Tier-1 micro-creators.</p>
+    <!-- ======================================================== -->
+    <!-- VIEW 2: DISCOVER DIRECTORY (MATCHING COLLYDE INSPIRATION) -->
+    <!-- ======================================================== -->
+    <div id="discoverViewSection" class="hidden">
+      
+      <!-- Directory Hero Header -->
+      <div class="mb-6">
+        <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-2 border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
+          The Directory
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight" style="color: var(--text-primary);">
+          Discover
+        </h1>
+        <p class="text-sm mt-1.5 max-w-2xl leading-relaxed" style="color: var(--text-secondary);">
+          Bigger channels spin above the middle, smaller ones below, largest first &mdash; browse creators by niche and subscriber size direct from YouTube data.
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        <div class="rounded-2xl p-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-          <div class="w-9 h-9 rounded-xl font-extrabold flex items-center justify-center text-sm mb-4 border" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">1</div>
-          <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Niche Directory (Discover)</h3>
-          <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-            No video link needed. Select your niche (Tech, Gaming, Finance, etc.) and subscriber range (1k – 10k) to browse channels directly with 1-click <code>[Visit]</code> buttons.
-          </p>
+      <!-- Directory Info Banner with Submit Channel CTA -->
+      <div class="rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 transition border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0" style="background-color: rgba(16, 185, 129, 0.12); color: #10b981;">
+            🚀
+          </div>
+          <div>
+            <h3 class="text-xs sm:text-sm font-bold" style="color: var(--text-primary);">Are you a YouTube Creator? List Your Channel Free</h3>
+            <p class="text-xs mt-0.5" style="color: var(--text-muted);">Get discovered by fellow creators looking for podcasts, shoutouts &amp; cross-promotions.</p>
+          </div>
+        </div>
+        <button onclick="openModal('submitChannelModal')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center space-x-1.5 shadow-sm" style="background: #10b981; color: #ffffff;">
+          <span>+ Add My Channel (Free)</span>
+        </button>
+      </div>
+
+      <!-- Main Directory Layout: Left Sidebar Filters + Right Channels Feed -->
+      <div class="flex flex-col lg:flex-row gap-8 items-start">
+        
+        <!-- LEFT SIDEBAR: FILTERS -->
+        <aside class="w-full lg:w-72 shrink-0 rounded-2xl p-5 space-y-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          
+          <!-- Search input -->
+          <div>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="dirSearchInput" 
+                placeholder="Search channels, handles, niche..." 
+                class="w-full pl-9 pr-3 py-2 text-xs rounded-xl focus:outline-none border transition"
+                style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"
+              >
+              <svg class="w-4 h-4 absolute left-3 top-2.5" style="color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+          </div>
+
+          <!-- Filter Section: SIZE -->
+          <div>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Size (Subscribers)</h4>
+            <div class="flex flex-wrap gap-1.5" id="sizePillGroup">
+              <button type="button" class="pill-btn" data-min="0" data-max="1000000000">All</button>
+              <button type="button" class="pill-btn" data-min="0" data-max="1000">0 – 1k</button>
+              <button type="button" class="pill-btn active" data-min="1000" data-max="10000">1k – 10k</button>
+              <button type="button" class="pill-btn" data-min="10000" data-max="100000">10k – 100k</button>
+              <button type="button" class="pill-btn" data-min="100000" data-max="500000">100k – 500k</button>
+              <button type="button" class="pill-btn" data-min="500000" data-max="2000000">500k – 2M</button>
+              <button type="button" class="pill-btn" data-min="2000000" data-max="10000000">2M – 10M</button>
+              <button type="button" class="pill-btn" data-min="10000000" data-max="1000000000">10M+</button>
+            </div>
+          </div>
+
+          <!-- Filter Section: NICHE -->
+          <div>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Niche</h4>
+            <div class="flex flex-wrap gap-1.5" id="nichePillGroup">
+              <button type="button" class="pill-btn" data-niche="All">All</button>
+              <button type="button" class="pill-btn active" data-niche="Tech">Tech</button>
+              <button type="button" class="pill-btn" data-niche="Gaming">Gaming</button>
+              <button type="button" class="pill-btn" data-niche="Maker & DIY">Maker & DIY</button>
+              <button type="button" class="pill-btn" data-niche="Film & VFX">Film & VFX</button>
+              <button type="button" class="pill-btn" data-niche="Music">Music</button>
+              <button type="button" class="pill-btn" data-niche="Cooking">Cooking</button>
+              <button type="button" class="pill-btn" data-niche="Fitness">Fitness</button>
+              <button type="button" class="pill-btn" data-niche="Finance">Finance</button>
+              <button type="button" class="pill-btn" data-niche="Science">Science</button>
+              <button type="button" class="pill-btn" data-niche="Education">Education</button>
+              <button type="button" class="pill-btn" data-niche="Travel">Travel</button>
+              <button type="button" class="pill-btn" data-niche="Beauty">Beauty</button>
+            </div>
+          </div>
+
+          <!-- Filter Section: LOOKING FOR (Collaboration Types) -->
+          <div>
+            <h4 class="text-[11px] font-bold uppercase tracking-wider mb-2.5" style="color: var(--text-muted);">Looking For (Collab)</h4>
+            <div class="flex flex-wrap gap-1.5" id="collabPillGroup">
+              <button type="button" class="pill-btn active" data-collab="None">None</button>
+              <button type="button" class="pill-btn" data-collab="Podcast guest">🎙️ Podcast guest</button>
+              <button type="button" class="pill-btn" data-collab="Cross-promo">🤝 Cross-promo</button>
+              <button type="button" class="pill-btn" data-collab="Guest spot">🎥 Guest spot</button>
+              <button type="button" class="pill-btn" data-collab="Shorts collab">⚡ Shorts collab</button>
+            </div>
+          </div>
+
+          <!-- Filter Section: REGION (Categorized High CPM / RPM Countries) -->
+          <div id="regionPillGroup" class="space-y-3 pt-1">
+            <div class="flex items-center justify-between">
+              <h4 class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--text-muted);">Region</h4>
+              <button type="button" class="pill-btn text-[11px] px-2.5 py-1" data-country="ANY">🌐 All (Global)</button>
+            </div>
+
+            <!-- North America -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🌎 North America</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn active" data-country="US">US 🇺🇸</button>
+                <button type="button" class="pill-btn" data-country="CA">CA 🇨🇦</button>
+              </div>
+            </div>
+
+            <!-- Europe -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🌍 Europe</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="GB">UK 🇬🇧</button>
+                <button type="button" class="pill-btn" data-country="DE">DE 🇩🇪</button>
+                <button type="button" class="pill-btn" data-country="NO">NO 🇳🇴</button>
+                <button type="button" class="pill-btn" data-country="CH">CH 🇨🇭</button>
+                <button type="button" class="pill-btn" data-country="NL">NL 🇳🇱</button>
+                <button type="button" class="pill-btn" data-country="IE">IE 🇮🇪</button>
+                <button type="button" class="pill-btn" data-country="AT">AT 🇦🇹</button>
+                <button type="button" class="pill-btn" data-country="FR">FR 🇫🇷</button>
+                <button type="button" class="pill-btn" data-country="FI">FI 🇫🇮</button>
+                <button type="button" class="pill-btn" data-country="SE">SE 🇸🇪</button>
+              </div>
+            </div>
+
+            <!-- Asia -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🌏 Asia</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="SG">SG 🇸🇬</button>
+                <button type="button" class="pill-btn" data-country="AE">AE 🇦🇪</button>
+                <button type="button" class="pill-btn" data-country="JP">JP 🇯🇵</button>
+              </div>
+            </div>
+
+            <!-- Oceania -->
+            <div>
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+                <span>🦘 Oceania</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="AU">AU 🇦🇺</button>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- RIGHT MAIN FEED: CREATOR DIRECTORY CARDS -->
+        <div class="flex-1 w-full space-y-4">
+          
+          <!-- Filter status bar -->
+          <div class="flex items-center justify-between pb-2 border-b text-xs transition" style="border-color: var(--border-color); color: var(--text-secondary);">
+            <div>
+              Showing <b id="dirCountDisplay" style="color: var(--text-primary);">0</b> creators in <span id="dirActiveNicheLabel" class="font-semibold text-[#f59e0b]">Tech</span> (<span id="dirActiveSizeLabel">1k – 10k</span>)<span id="dirActiveCollabLabel" class="ml-1 font-semibold text-emerald-400"></span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span style="color: var(--text-muted);">Order:</span>
+              <span class="font-medium" style="color: var(--text-primary);">Relevance</span>
+            </div>
+          </div>
+
+          <!-- Loading indicator -->
+          <div id="dirLoadingIndicator" class="hidden text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-7 w-7 border-2 border-t-transparent mb-2" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
+            <p class="text-xs" style="color: var(--text-muted);">Fetching creators from YouTube...</p>
+          </div>
+
+          <!-- Channel Cards Container (Matching Collyde with [Visit] button) -->
+          <div id="dirCardsContainer" class="space-y-3">
+            <!-- Dynamically populated channel cards -->
+          </div>
+
+          <!-- Load More Button -->
+          <div id="dirLoadMoreContainer" class="mt-6 text-center hidden">
+            <button id="dirLoadMoreBtn" type="button" class="px-6 py-2.5 rounded-xl font-bold text-xs transition border cursor-pointer inline-flex items-center space-x-2" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary);">
+              <span id="dirLoadMoreText">Load more creators</span>
+              <div id="dirLoadMoreSpinner" class="hidden animate-spin rounded-full h-3.5 w-3.5 border-2 border-t-transparent" style="border-color: var(--text-primary); border-top-color: transparent;"></div>
+              <svg id="dirLoadMoreIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+          </div>
+
         </div>
 
-        <div class="rounded-2xl p-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-          <div class="w-9 h-9 rounded-xl font-extrabold flex items-center justify-center text-sm mb-4 border" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">2</div>
-          <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Video Scout (URL)</h3>
-          <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-            Paste any viral video in your niche to extract commenting micro-creators, verified retention timestamp hooks, and safe description shoutouts.
-          </p>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. HOW IT WORKS SECTION (MATCHING REFERENCE)-->
+    <!-- ========================================== -->
+    <section id="howItWorks" class="mt-24 pt-12 border-t scroll-mt-24" style="border-color: var(--border-color);">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-3 border" style="background-color: var(--bg-pill); border-color: var(--card-hover-border); color: #c4b5fd;">
+          Workflow
+        </span>
+        <h2 class="text-2xl md:text-4xl font-extrabold mb-3" style="color: var(--text-primary);">How YTCreatorFinder Works</h2>
+        <p class="text-sm" style="color: var(--text-secondary);">Designed for emerging YouTubers to find genuine Tier-1 collaborators in seconds.</p>
+      </div>
+
+      <!-- 3 Sleek Cards (Like 'How Akko Works' in Reference) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-8">
+        <div class="ref-card rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-extrabold mb-4 border" style="background: linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(79,70,229,0.1) 100%); border-color: rgba(139,92,246,0.3); color: #c4b5fd;">
+              01
+            </div>
+            <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Intelligent Niche Filter</h3>
+            <p class="text-xs leading-relaxed mb-4" style="color: var(--text-secondary);">
+              Filter by niche (Tech, Gaming, Finance) and target 1,000 &ndash; 10,000 subscriber channels across US, UK, Canada &amp; Australia.
+            </p>
+          </div>
+          <div class="p-3 rounded-2xl border text-[11px] font-mono flex items-center justify-between" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
+            <span>Target: 1k &ndash; 10k</span>
+            <span class="text-emerald-400 font-bold">&check; Tier-1 Official</span>
+          </div>
         </div>
 
-        <div class="rounded-2xl p-6 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-          <div class="w-9 h-9 rounded-xl font-extrabold flex items-center justify-center text-sm mb-4 border" style="background-color: var(--bg-pill); color: var(--text-primary); border-color: var(--border-color);">3</div>
-          <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">1-Click Visit & Mentions</h3>
-          <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-            Instantly visit creator channels to engage, copy safe <code>@mention</code> batches for video descriptions, or export formula-safe CSV spreadsheets.
-          </p>
+        <div class="ref-card rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-extrabold mb-4 border" style="background: linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(79,70,229,0.1) 100%); border-color: rgba(139,92,246,0.3); color: #c4b5fd;">
+              02
+            </div>
+            <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Live Video Comment Scout</h3>
+            <p class="text-xs leading-relaxed mb-4" style="color: var(--text-secondary);">
+              Paste any viral YouTube URL in your niche. Our engine extracts fellow micro-creators actively commenting and checks their recent uploads.
+            </p>
+          </div>
+          <div class="p-3 rounded-2xl border text-[11px] font-mono flex items-center justify-between" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
+            <span>Scans: 50+ Comments</span>
+            <span class="text-violet-400 font-bold">&check; Active Uploaders</span>
+          </div>
+        </div>
+
+        <div class="ref-card rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-extrabold mb-4 border" style="background: linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(79,70,229,0.1) 100%); border-color: rgba(139,92,246,0.3); color: #c4b5fd;">
+              03
+            </div>
+            <h3 class="font-bold text-base mb-2" style="color: var(--text-primary);">Safe Outreach &amp; Bookmarks</h3>
+            <p class="text-xs leading-relaxed mb-4" style="color: var(--text-secondary);">
+              Save channels to your account, visit with 1-click, and copy anti-spam @mention blocks formatted for your next video description.
+            </p>
+          </div>
+          <div class="p-3 rounded-2xl border text-[11px] font-mono flex items-center justify-between" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
+            <span>Max 5 Mentions</span>
+            <span class="text-amber-400 font-bold">&check; 100% Spam-Safe</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Compact Advantage Blocks (Like Simplicity / Security in Reference) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <div class="p-4 rounded-2xl border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="font-bold text-xs mb-1" style="color: var(--text-primary);">Zero-Spam Guarantee</div>
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-secondary);">Batched output prevents YouTube description and comment spam flags.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="font-bold text-xs mb-1" style="color: var(--text-primary);">Strict Metadata Check</div>
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-secondary);">Direct verification of official YouTube Studio registered country.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="font-bold text-xs mb-1" style="color: var(--text-primary);">Cloud Bookmarks</div>
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-secondary);">Save creators to your personal account with 1-click cloud sync.</p>
+        </div>
+        <div class="p-4 rounded-2xl border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+          <div class="font-bold text-xs mb-1" style="color: var(--text-primary);">100% Free Tool</div>
+          <p class="text-[11px] leading-relaxed" style="color: var(--text-secondary);">No credit card or paid subscriptions required to find collaborators.</p>
         </div>
       </div>
     </section>
 
     <!-- ========================================== -->
-    <!-- 2. WHY MICRO-CREATORS SECTION              -->
+    <!-- 2. OUR MISSION / WHY MICRO-CREATORS        -->
     <!-- ========================================== -->
-    <section id="whyTargetUS" class="mt-20 max-w-5xl mx-auto rounded-3xl p-8 md:p-12 scroll-mt-24 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-      <div class="max-w-3xl">
-        <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-3 border" style="background-color: var(--bg-banner); color: var(--text-banner); border-color: var(--border-color);">High Retention & CPM Strategy</span>
-        <h2 class="text-2xl md:text-4xl font-extrabold mt-2 mb-4" style="color: var(--text-primary);">Why Partner with US/UK Micro-Creators?</h2>
-        <p class="text-sm leading-relaxed mb-8" style="color: var(--text-secondary);">
-          Micro-creators (channels with 1,000 to 10,000 subscribers) have an average engagement rate <strong style="color: var(--text-primary);">60% higher</strong> than mega channels. They actively read every comment, appreciate authentic shoutouts, and bring genuine Tier-1 viewers with high purchasing power.
+    <section id="whyTargetUS" class="mt-24 max-w-5xl mx-auto rounded-3xl p-8 md:p-12 scroll-mt-24 border transition" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Left: Mission Details -->
+        <div class="lg:col-span-7">
+          <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-3 border" style="background-color: var(--bg-banner); color: var(--text-banner); border-color: var(--card-hover-border);">
+            High Retention Strategy
+          </span>
+          <h2 class="text-2xl md:text-4xl font-extrabold mt-1 mb-4" style="color: var(--text-primary);">
+            Why Partner with US/UK Micro-Creators?
+          </h2>
+          <p class="text-xs sm:text-sm leading-relaxed mb-6" style="color: var(--text-secondary);">
+            Micro-creators (1,000 to 10,000 subscribers) are in the growth sweet spot: they actively read every comment, celebrate collaborations, and introduce your channel to genuine high-purchasing-power audiences.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="flex items-start space-x-2.5 p-3 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Break 0-Views:</strong> Creator engagement signals YouTube's algorithm to recommend your video.</span>
+            </div>
+            <div class="flex items-start space-x-2.5 p-3 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">High Reply Rate:</strong> Emerging creators respond to 80%+ of genuine outreach.</span>
+            </div>
+            <div class="flex items-start space-x-2.5 p-3 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">$15&ndash;$40 CPM:</strong> US, UK, CA audiences maximize YouTube Ads revenue potential.</span>
+            </div>
+            <div class="flex items-start space-x-2.5 p-3 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+              <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Active Only:</strong> Inactive or dead channels are automatically excluded.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Glowing Visual Metrics Card (Matching Reference 3D Card) -->
+        <div class="lg:col-span-5">
+          <div class="rounded-3xl p-6 sm:p-7 border relative overflow-hidden" style="background: radial-gradient(circle at 70% 30%, rgba(124,58,237,0.3) 0%, rgba(15,16,24,0.95) 70%); border-color: rgba(139,92,246,0.35); box-shadow: 0 0 30px rgba(124,58,237,0.15);">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-violet-300 mb-4 flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-violet-400 animate-ping"></span>
+              <span>Creator Impact Engine</span>
+            </div>
+
+            <div class="space-y-4">
+              <div class="p-3.5 rounded-2xl border" style="background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                <div class="text-2xl font-black text-white">60% Higher</div>
+                <div class="text-xs text-slate-400 mt-0.5">Average engagement vs 1M+ subscriber channels</div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl border" style="background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                <div class="text-2xl font-black text-violet-300">3.2x Community Growth</div>
+                <div class="text-xs text-slate-400 mt-0.5">When tagging active creators in your niche description</div>
+              </div>
+
+              <div class="p-3.5 rounded-2xl border" style="background-color: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                <div class="text-2xl font-black text-emerald-400">1,000 &ndash; 10,000</div>
+                <div class="text-xs text-slate-400 mt-0.5">The algorithm sweet spot for cross-channel collaborations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. CREATOR INSIGHTS (MATCHING REFERENCE BLOG) -->
+    <!-- ========================================== -->
+    <section class="mt-24 max-w-5xl mx-auto">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-2 border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-muted);">
+            Knowledge Base
+          </span>
+          <h2 class="text-2xl md:text-3xl font-extrabold" style="color: var(--text-primary);">Creator Growth Strategies</h2>
+        </div>
+        <button onclick="document.getElementById('navDiscoverBtn').click()" class="text-xs font-semibold hover:underline flex items-center space-x-1" style="color: var(--text-secondary);">
+          <span>Browse Creators</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="ref-card rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-violet-500/15 text-violet-400 border border-violet-500/30 inline-block mb-3">
+              Algorithm Strategy
+            </span>
+            <h3 class="font-bold text-sm mb-2" style="color: var(--text-primary);">How 1,000-Sub Collabs Break the 0-Views Flatline</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+              YouTube's recommendation system tests new uploads with creator communities first. Genuine peer shoutouts provide the initial watch-time spike.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t text-[11px] text-violet-400 font-semibold flex items-center space-x-1" style="border-color: var(--border-color);">
+            <span>Read guide</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+        </div>
+
+        <div class="ref-card rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 inline-block mb-3">
+              Case Study
+            </span>
+            <h3 class="font-bold text-sm mb-2" style="color: var(--text-primary);">0 to 10k Subs: The Tier-1 Creator Networking Formula</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+              Why engaging in micro-creator comment threads yields a 60% higher response rate than cold emailing established influencers.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t text-[11px] text-emerald-400 font-semibold flex items-center space-x-1" style="border-color: var(--border-color);">
+            <span>Read case study</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+        </div>
+
+        <div class="ref-card rounded-3xl p-6 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 inline-block mb-3">
+              Safety Best Practice
+            </span>
+            <h3 class="font-bold text-sm mb-2" style="color: var(--text-primary);">The Safe @Mention Protocol for Video Descriptions</h3>
+            <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
+              How to format creator credits and shoutouts in your description without ever triggering YouTube's automated spam or metadata penalties.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t text-[11px] text-amber-400 font-semibold flex items-center space-x-1" style="border-color: var(--border-color);">
+            <span>Learn safe batches</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. BOTTOM CALL-TO-ACTION (MATCHING REFERENCE)-->
+    <!-- ========================================== -->
+    <section class="mt-24 max-w-5xl mx-auto">
+      <div class="rounded-3xl p-8 sm:p-14 text-center border relative overflow-hidden bottom-cta-glow" style="border-color: rgba(139,92,246,0.3); box-shadow: 0 0 40px rgba(124,58,237,0.18);">
+        <span class="text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full inline-block mb-4 border" style="background-color: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #c4b5fd;">
+          Accelerate Your Growth
+        </span>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4" style="color: var(--text-primary);">
+          Ready to Find Your Next <br class="hidden sm:inline">
+          <span class="bg-gradient-to-r from-violet-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">Creator Collaboration?</span>
+        </h2>
+        <p class="text-xs sm:text-sm max-w-xl mx-auto leading-relaxed mb-8" style="color: var(--text-secondary);">
+          Join thousands of emerging YouTubers finding active Tier-1 micro-creators. Expand your audience, build genuine partnerships, and list your channel free.
         </p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
-            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Break 0-Views Algorithm:</strong> Getting initial views and replies from fellow creators triggers the YouTube recommendation engine.</span>
-          </div>
-          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
-            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Higher Reply Rates:</strong> Little creators check their Studio notifications daily and reciprocate genuine engagement.</span>
-          </div>
-          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
-            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">High CPM Markets:</strong> US, UK, and Canadian viewership increases your channel's ad revenue potential ($15-$40 CPM).</span>
-          </div>
-          <div class="flex items-start space-x-3 p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
-            <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            <span style="color: var(--text-secondary);"><strong style="color: var(--text-primary);">Active Uploaders Only:</strong> Our tool automatically filters out inactive or abandoned channels so your shoutouts don't go to waste.</span>
-          </div>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button onclick="openModal('submitChannelModal')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs text-white transition cursor-pointer flex items-center justify-center space-x-2 shadow-lg" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <span>+ List Your Channel (Free)</span>
+          </button>
+          <button onclick="document.getElementById('navDiscoverBtn').click()" class="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs border transition cursor-pointer flex items-center justify-center space-x-2" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary);">
+            <span>⚡ Explore 1k &ndash; 10k Creators</span>
+          </button>
         </div>
       </div>
     </section>
@@ -862,107 +1159,144 @@
   <!-- ========================================== -->
   <!-- FOOTER                                     -->
   <!-- ========================================== -->
-  <footer class="border-t py-8 text-xs transition" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-muted);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+  <footer class="border-t py-8 text-xs transition mt-auto" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-muted);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center space-x-2">
-        <span class="font-bold" style="color: var(--text-primary);">CreatorScout</span>
+        <img src="/logo.png" alt="YTCreatorFinder" class="w-5 h-5 rounded-full shrink-0">
+        <span class="font-bold" style="color: var(--text-primary);">YTCreatorFinder</span>
         <span>&bull;</span>
-        <span>Minimalist Tier-1 YouTube Creator Discovery</span>
+        <span>Discover Tier-1 YouTube Creators &amp; Collabs</span>
       </div>
-      <div class="flex items-center space-x-5" style="color: var(--text-secondary);">
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2" style="color: var(--text-secondary);">
         <button onclick="openModal('privacyModal')" class="hover:underline transition cursor-pointer">Privacy Policy</button>
         <button onclick="openModal('termsModal')" class="hover:underline transition cursor-pointer">Terms of Service</button>
-        <button onclick="openModal('aboutModal')" class="hover:underline transition cursor-pointer">About</button>
+        <button onclick="openModal('disclaimerModal')" class="hover:underline transition cursor-pointer">Disclaimer</button>
+        <button onclick="openModal('aboutModal')" class="hover:underline transition cursor-pointer">About Us</button>
         <button onclick="openModal('contactModal')" class="hover:underline transition cursor-pointer">Contact</button>
+      </div>
+      <div class="text-[11px] flex flex-col sm:flex-row items-center gap-2" style="color: var(--text-muted);">
+        <span>Support: <a href="mailto:hasibul80801@gmail.com" class="hover:underline font-medium" style="color: var(--text-secondary);">hasibul80801@gmail.com</a></span>
+        <span class="hidden sm:inline">&bull;</span>
+        <span>&copy; 2026 <a href="https://ytcreatorfinder.xyz" class="hover:underline font-medium" style="color: var(--text-secondary);">ytcreatorfinder.xyz</a></span>
       </div>
     </div>
   </footer>
 
   <!-- ========================================== -->
-  <!-- MODALS (PRO, PRIVACY, TERMS, ABOUT, CONTACT)-->
+  <!-- MODALS (PRIVACY, TERMS, DISCLAIMER, ABOUT, CONTACT, SUBMIT) -->
   <!-- ========================================== -->
 
-  <!-- Pro Modal -->
-  <div id="proModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
-    <div class="rounded-3xl max-w-md w-full p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-      <button onclick="closeModal('proModal')" class="absolute top-4 right-4 text-lg cursor-pointer" style="color: var(--text-muted);">&times;</button>
-      <div class="inline-block px-2.5 py-1 rounded-full text-[11px] font-bold mb-3 border" style="background-color: var(--bg-pill); color: #f59e0b; border-color: var(--border-color);">CreatorScout Pro</div>
-      <h3 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">Unlock Unlimited Growth</h3>
-      <p class="text-xs mb-5" style="color: var(--text-secondary);">Designed for YouTubers, agencies, and brands targeting US/UK micro-creators.</p>
-      
-      <div class="space-y-2.5 text-xs mb-6" style="color: var(--text-secondary);">
-        <div class="flex items-center space-x-2.5">
-          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          <span>Unlimited video searches with no daily quota limits</span>
-        </div>
-        <div class="flex items-center space-x-2.5">
-          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          <span>Direct Business Email extraction from channel bios</span>
-        </div>
-        <div class="flex items-center space-x-2.5">
-          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          <span>Auto-categorization (Gaming, Tech, Vlog, Lifestyle)</span>
-        </div>
-        <div class="flex items-center space-x-2.5">
-          <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          <span>Ad-Free high-speed interface</span>
-        </div>
-      </div>
-
-      <div class="p-4 rounded-2xl mb-5 flex items-baseline justify-between border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
-        <div>
-          <div class="text-2xl font-extrabold" style="color: var(--text-primary);">$19 <span class="text-xs font-normal" style="color: var(--text-muted);">/ month</span></div>
-          <div class="text-[11px]" style="color: var(--text-muted);">Cancel anytime. 7-day money-back guarantee.</div>
-        </div>
-        <span class="text-xs font-semibold text-emerald-500">Instant Access</span>
-      </div>
-
-      <button onclick="alert('Payment gateway integration available when domain is connected via LemonSqueezy/Stripe.'); closeModal('proModal');" class="w-full bg-[#e14b4b] hover:bg-[#cf3e3e] text-white font-bold py-3 rounded-xl transition text-sm cursor-pointer">
-        Upgrade Now
-      </button>
-    </div>
-  </div>
-
-  <!-- Privacy Policy Modal -->
+  <!-- Privacy Policy Modal (Full Google AdSense / GDPR / CCPA Compliant) -->
   <div id="privacyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
-    <div class="rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-      <button onclick="closeModal('privacyModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
-      <h2 class="text-lg font-bold mb-3" style="color: var(--text-primary);">Privacy Policy</h2>
-      <div class="text-xs space-y-2.5 leading-relaxed" style="color: var(--text-secondary);">
-        <p>CreatorScout uses official YouTube Data API v3 endpoints. Any API Key entered is stored locally on your device via HTML5 LocalStorage and never stored on third-party servers.</p>
-        <p>By using this tool, you agree to YouTube Terms of Service and Google Privacy Policy.</p>
+    <div class="rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('privacyModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-xl font-bold mb-3" style="color: var(--text-primary);">Privacy Policy</h2>
+      <p class="text-[11px] mb-4" style="color: var(--text-muted);">Last Updated: November 2026 &bull; Website: <a href="https://ytcreatorfinder.xyz" class="underline">https://ytcreatorfinder.xyz</a></p>
+      
+      <div class="text-xs space-y-3.5 leading-relaxed" style="color: var(--text-secondary);">
+        <p>At <strong>YTCreatorFinder</strong> (accessible from <a href="https://ytcreatorfinder.xyz" class="underline font-medium">https://ytcreatorfinder.xyz</a>), one of our main priorities is the privacy of our visitors. This Privacy Policy document outlines the types of information that is collected and recorded by YTCreatorFinder and how we use it.</p>
+        
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">1. Google AdSense &amp; DoubleClick DART Cookies</h4>
+        <p>Google is one of the third-party vendors on our site. It uses cookies, commonly known as <strong>DART cookies</strong>, to serve advertisements to our site visitors based on their visit to ytcreatorfinder.xyz and other sites on the internet. Visitors may choose to decline or customize the use of DART cookies by visiting the Google Ad and Content Network Privacy Policy at: <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" class="underline text-blue-500">https://policies.google.com/technologies/ads</a>.</p>
+        
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">2. Advertising Partners &amp; Third-Party Ad Networks</h4>
+        <p>Third-party ad servers or ad networks use technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on YTCreatorFinder. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see. <em>YTCreatorFinder has no access to or control over these cookies that are used by third-party advertisers.</em></p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">3. YouTube API Services &amp; User Data</h4>
+        <p>YTCreatorFinder utilizes official YouTube Data API v3 endpoints to retrieve public channel metrics, channel names, subscriber counts, and video comments. By using this service, you agree to be bound by the <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer" class="underline text-blue-500">YouTube Terms of Service</a> and the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="underline text-blue-500">Google Privacy Policy</a>.</p>
+        <p>When you enter your own YouTube API Key into the application settings, the key is stored locally in your browser's HTML5 LocalStorage and is transmitted securely to our server endpoint solely to execute requests to YouTube Data API v3 on your behalf. We never permanently store, log, or sell your personal API keys on any database or external server.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">4. Community Channel Submissions &amp; Creator Data</h4>
+        <p>When creators optionally submit their YouTube handle, channel details, or contact email via our "Add My Channel" feature, this information is collected solely to index their channel for collaboration discovery. Contact emails provided are kept private and never sold, rented, or shared with third parties. Creators can request modification or complete removal of their channel listing at any time by emailing <a href="mailto:hasibul80801@gmail.com" class="underline text-blue-500">hasibul80801@gmail.com</a>.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">5. Log Files &amp; Web Analytics</h4>
+        <p>YTCreatorFinder follows a standard procedure of using log files. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">5. CCPA Privacy Rights (Do Not Sell My Personal Information)</h4>
+        <p>Under the California Consumer Privacy Act (CCPA), California consumers have the right to request that a business disclose the categories and specific pieces of personal data collected, request deletion of personal data, and request that a business not sell their personal data. <strong>YTCreatorFinder does not sell any personal information.</strong></p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">6. GDPR Data Protection Rights</h4>
+        <p>We want to make sure you are fully aware of all of your data protection rights under the General Data Protection Regulation (GDPR). Every user is entitled to the right to access, rectification, erasure, restriction of processing, objection to processing, and data portability. If you make a request, we have one month to respond to you.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">7. Children's Privacy (COPPA)</h4>
+        <p>Another part of our priority is adding protection for children while using the internet. YTCreatorFinder does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">8. Contact Us Regarding Privacy</h4>
+        <p>If you have any questions or require more information about our Privacy Policy, please contact us directly at <a href="mailto:hasibul80801@gmail.com" class="underline text-blue-500 font-medium">hasibul80801@gmail.com</a>.</p>
       </div>
-      <div class="mt-5 text-right">
-        <button onclick="closeModal('privacyModal')" class="text-xs font-semibold px-4 py-2 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+
+      <div class="mt-6 pt-4 border-t flex justify-end" style="border-color: var(--border-color);">
+        <button onclick="closeModal('privacyModal')" class="text-xs font-semibold px-5 py-2.5 rounded-xl border cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close Privacy Policy</button>
       </div>
     </div>
   </div>
 
-  <!-- Terms Modal -->
+  <!-- Terms of Service Modal -->
   <div id="termsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
-    <div class="rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-      <button onclick="closeModal('termsModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
-      <h2 class="text-lg font-bold mb-3" style="color: var(--text-primary);">Terms of Service</h2>
-      <div class="text-xs space-y-2.5 leading-relaxed" style="color: var(--text-secondary);">
-        <p>CreatorScout is an analytical utility for content creators. All data presented is fetched via publicly available YouTube channels and comments.</p>
-        <p>Users are responsible for complying with YouTube's Community Guidelines and anti-spam policies when reaching out to creators.</p>
+    <div class="rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('termsModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-xl font-bold mb-3" style="color: var(--text-primary);">Terms of Service</h2>
+      <p class="text-[11px] mb-4" style="color: var(--text-muted);">Effective Date: November 2026 &bull; YTCreatorFinder</p>
+
+      <div class="text-xs space-y-3.5 leading-relaxed" style="color: var(--text-secondary);">
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">1. Acceptance of Terms</h4>
+        <p>By accessing and using <strong>YTCreatorFinder</strong> (<a href="https://ytcreatorfinder.xyz" class="underline">https://ytcreatorfinder.xyz</a>), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this service.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">2. Service Description &amp; Fair Use</h4>
+        <p>YTCreatorFinder is an analytical discovery tool created to help content creators, agencies, and researchers locate publicly listed YouTube channels by subscriber count, niche, and country. Users agree to utilize the tool solely for lawful, research, and collaborative purposes.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">3. Anti-Spam &amp; Outreach Guidelines</h4>
+        <p>Users agree to strictly respect YouTube's Community Guidelines. You agree not to use extracted creator handles or public contact data for spamming, harassment, sending automated mass solicitations, or posting repetitive unwanted comments on YouTube channels.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">4. Intellectual Property &amp; Non-Affiliation</h4>
+        <p>All software design, interface elements, and custom algorithms on YTCreatorFinder are the intellectual property of YTCreatorFinder. YouTube and the YouTube logo are registered trademarks of Google LLC. YTCreatorFinder is not affiliated with, endorsed by, or sponsored by YouTube or Google LLC.</p>
+
+        <h4 class="font-bold text-sm" style="color: var(--text-primary);">5. Limitation of Liability</h4>
+        <p>In no event shall YTCreatorFinder, nor its owners or contributors, be held liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from your access to or use of the service or YouTube API data.</p>
       </div>
-      <div class="mt-5 text-right">
-        <button onclick="closeModal('termsModal')" class="text-xs font-semibold px-4 py-2 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+
+      <div class="mt-6 pt-4 border-t flex justify-end" style="border-color: var(--border-color);">
+        <button onclick="closeModal('termsModal')" class="text-xs font-semibold px-5 py-2.5 rounded-xl border cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close Terms</button>
       </div>
     </div>
   </div>
 
-  <!-- About Modal -->
+  <!-- Disclaimer Modal -->
+  <div id="disclaimerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('disclaimerModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-xl font-bold mb-3" style="color: var(--text-primary);">Trademark &amp; API Disclaimer</h2>
+      
+      <div class="text-xs space-y-3.5 leading-relaxed" style="color: var(--text-secondary);">
+        <div class="p-3.5 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+          <strong style="color: var(--text-primary);">Important Notice:</strong> YTCreatorFinder is an independent web application and is <strong>not affiliated with, endorsed by, sponsored by, or associated in any way with YouTube, LLC or Google LLC.</strong>
+        </div>
+        <p>The name <strong>"YouTube"</strong> as well as related names, logos, emblems, and images are registered trademarks of Google LLC. Any use of YouTube's name or trademarks on this website is solely for nominative, analytical, and informational reference under fair use principles.</p>
+        <p>All creator data, channel metadata, and comment metrics displayed on this site are sourced in compliance with publicly accessible YouTube Data API v3 guidelines.</p>
+      </div>
+
+      <div class="mt-6 pt-4 border-t flex justify-end" style="border-color: var(--border-color);">
+        <button onclick="closeModal('disclaimerModal')" class="text-xs font-semibold px-5 py-2.5 rounded-xl border cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Us Modal -->
   <div id="aboutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
     <div class="rounded-3xl max-w-lg w-full p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-      <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
-      <h2 class="text-lg font-bold mb-2" style="color: var(--text-primary);">About CreatorScout</h2>
-      <p class="text-xs leading-relaxed" style="color: var(--text-secondary);">
-        CreatorScout is an independent creator discovery engine designed to help emerging YouTubers break out of the 0-views algorithmic flatline through genuine niche collaborations and targeted US/UK micro-influencer outreach.
-      </p>
-      <div class="mt-5 text-right">
-        <button onclick="closeModal('aboutModal')" class="text-xs font-semibold px-4 py-2 rounded-xl border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+      <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-xl font-bold mb-2" style="color: var(--text-primary);">About YTCreatorFinder</h2>
+      <p class="text-[11px] mb-3" style="color: var(--text-muted);">Empowering Creators Through Authentic Collaboration</p>
+      
+      <div class="text-xs space-y-3 leading-relaxed" style="color: var(--text-secondary);">
+        <p><strong>YTCreatorFinder</strong> (<a href="https://ytcreatorfinder.xyz" class="underline font-medium">https://ytcreatorfinder.xyz</a>) is a specialized discovery platform built to help emerging content creators break out of the 0-views algorithmic flatline.</p>
+        <p>Rather than struggling to compete with mega-channels with millions of subscribers, YTCreatorFinder connects you directly with active <strong>Tier-1 micro-creators</strong> (1,000 to 10,000 subscribers) across the United States, United Kingdom, Canada, Australia, and Europe.</p>
+        <p>Whether you're looking for podcast guests, co-hosts for YouTube Shorts, cross-promotions, or genuine creator partnerships, our tool gives you clean filtering by niche, country, and collaboration type with zero spam.</p>
+        <p class="pt-2 border-t text-[11px]" style="border-color: var(--border-color); color: var(--text-muted);">Founded by VoiceOfHC. Inquiries &amp; feedback: <a href="mailto:hasibul80801@gmail.com" class="underline font-medium" style="color: var(--text-primary);">hasibul80801@gmail.com</a></p>
+      </div>
+
+      <div class="mt-6 pt-4 border-t flex justify-end" style="border-color: var(--border-color);">
+        <button onclick="closeModal('aboutModal')" class="text-xs font-semibold px-5 py-2.5 rounded-xl border cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
       </div>
     </div>
   </div>
@@ -970,17 +1304,246 @@
   <!-- Contact Modal -->
   <div id="contactModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
     <div class="rounded-3xl max-w-lg w-full p-6 relative border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
-      <button onclick="closeModal('contactModal')" class="absolute top-4 right-4 cursor-pointer" style="color: var(--text-muted);">&times;</button>
-      <h2 class="text-lg font-bold mb-1" style="color: var(--text-primary);">Contact & Support</h2>
-      <p class="text-xs mb-4" style="color: var(--text-muted);">Send us feedback, feature requests, or partnership inquiries.</p>
-      <form onsubmit="event.preventDefault(); alert('Thank you! Your message has been received.'); closeModal('contactModal');" class="space-y-3 text-xs">
+      <button onclick="closeModal('contactModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      <h2 class="text-xl font-bold mb-1" style="color: var(--text-primary);">Contact &amp; Support</h2>
+      <p class="text-xs mb-4" style="color: var(--text-muted);">Have questions, feedback, or need assistance? Reach out to our team.</p>
+      
+      <div class="mb-4 p-3 rounded-xl border text-xs flex items-center space-x-2.5" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-secondary);">
+        <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span>Direct Email: <a href="mailto:hasibul80801@gmail.com" class="font-bold underline" style="color: var(--text-primary);">hasibul80801@gmail.com</a> &bull; <a href="mailto:support@ytcreatorfinder.xyz" class="underline" style="color: var(--text-muted);">support@ytcreatorfinder.xyz</a></span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); const name=this.elements[0].value; const email=this.elements[1].value; const msg=this.elements[2].value; window.location.href=`mailto:hasibul80801@gmail.com?subject=Inquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(msg + '\n\nFrom: ' + name + ' (' + email + ')')}`; showToast('Opening mail client...'); closeModal('contactModal');" class="space-y-3 text-xs">
         <input type="text" required placeholder="Your Name" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
-        <input type="email" required placeholder="Your Email" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
-        <textarea rows="3" required placeholder="How can we assist you?" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"></textarea>
+        <input type="email" required placeholder="Your Email (e.g. name@example.com)" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+        <textarea rows="3" required placeholder="How can we help you?" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);"></textarea>
         <button type="submit" class="w-full bg-[#e14b4b] hover:bg-[#cf3e3e] text-white font-bold py-2.5 rounded-xl transition cursor-pointer">
           Send Message
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Submit My Channel Modal -->
+  <div id="submitChannelModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-lg w-full p-6 relative border max-h-[90vh] overflow-y-auto" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('submitChannelModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      
+      <div id="submitFormView">
+        <div class="flex items-center space-x-2.5 mb-2">
+          <span class="text-xl">🚀</span>
+          <h2 class="text-xl font-bold" style="color: var(--text-primary);">List Your Channel (100% Free)</h2>
+        </div>
+        <p class="text-xs mb-4" style="color: var(--text-muted);">Get discovered by brands, sponsors, and creators in your niche looking for authentic collaborations.</p>
+
+        <form id="submitChannelForm" class="space-y-3.5 text-xs">
+          <div>
+            <label class="block font-semibold mb-1" style="color: var(--text-primary);">YouTube Handle or URL *</label>
+            <input type="text" id="subHandle" required placeholder="@yourhandle or youtube.com/@handle" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold mb-1" style="color: var(--text-primary);">Channel Name</label>
+              <input type="text" id="subName" placeholder="e.g. Austin Dev Tech" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+            </div>
+            <div>
+              <label class="block font-semibold mb-1" style="color: var(--text-primary);">Primary Niche *</label>
+              <select id="subNiche" required class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+                <option value="Tech">Tech &amp; Coding</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Finance">Finance &amp; Investing</option>
+                <option value="Fitness">Fitness &amp; Health</option>
+                <option value="Education">Education &amp; Science</option>
+                <option value="Cooking">Cooking &amp; Food</option>
+                <option value="Lifestyle">Lifestyle &amp; Vlogging</option>
+                <option value="Travel">Travel &amp; Adventure</option>
+                <option value="Entertainment">Entertainment &amp; Comedy</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold mb-1" style="color: var(--text-primary);">Subscriber Size *</label>
+              <select id="subSize" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+                <option value="0 - 1k">Under 1k (Beginner)</option>
+                <option value="1k - 10k" selected>1k – 10k (Micro-creator)</option>
+                <option value="10k - 50k">10k – 50k</option>
+                <option value="50k - 100k">50k – 100k</option>
+                <option value="100k+">100k+</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1" style="color: var(--text-primary);">Country / Region *</label>
+              <select id="subCountry" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+                <option value="US" selected>United States 🇺🇸</option>
+                <option value="GB">United Kingdom 🇬🇧</option>
+                <option value="CA">Canada 🇨🇦</option>
+                <option value="AU">Australia 🇦🇺</option>
+                <option value="DE">Germany 🇩🇪</option>
+                <option value="OTHER">Other / Global 🌍</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1" style="color: var(--text-primary);">Open To Collaboration Type</label>
+            <select id="subCollab" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+              <option value="General Collabs" selected>🤝 Any Collab / Cross-promotion</option>
+              <option value="Podcast guest">🎙️ Podcast Guest / Co-host</option>
+              <option value="Shorts collab">⚡ Shorts / TikTok Collaboration</option>
+              <option value="Guest spot">🎥 Video Guest Appearance</option>
+              <option value="Challenge video">🏆 Challenge / Game collab</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-semibold mb-1" style="color: var(--text-primary);">Contact Email or Discord (Private)</label>
+            <input type="text" id="subContact" placeholder="email@domain.com or @discord" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+          </div>
+
+          <div id="submitChannelError" class="hidden text-xs text-rose-500 font-medium"></div>
+
+          <button type="submit" id="submitChannelBtn" class="w-full text-white font-bold py-2.5 rounded-xl transition cursor-pointer flex items-center justify-center space-x-2" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <span>Submit Channel (Free)</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Success Screen after submit -->
+      <div id="submitSuccessView" class="hidden text-center py-4">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-full flex items-center justify-center text-3xl" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981;">
+          ✓
+        </div>
+        <h3 class="text-lg font-bold mb-1" style="color: var(--text-primary);">Channel Listed Successfully!</h3>
+        <p class="text-xs mb-4" style="color: var(--text-secondary);">Your channel is now submitted to the YTCreatorFinder community directory.</p>
+
+        <div class="p-4 rounded-2xl border text-left mb-4" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+          <p class="text-xs font-semibold mb-2" style="color: var(--text-primary);">🔥 Want to get featured higher &amp; reach more collaborators?</p>
+          <p class="text-[11px] mb-3" style="color: var(--text-muted);">Share your submission with other creators on Twitter/X or Reddit!</p>
+          <div class="flex items-center space-x-2">
+            <button onclick="shareSubmissionOnTwitter()" class="flex-1 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer flex items-center justify-center space-x-1.5" style="background-color: #000000; border: 1px solid rgba(255,255,255,0.15);">
+              <span>Share on X</span>
+            </button>
+            <button onclick="copySubmissionLink()" class="px-3.5 py-2 rounded-xl text-xs font-medium border transition cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary);">
+              Copy Link
+            </button>
+          </div>
+        </div>
+
+        <button onclick="closeModal('submitChannelModal')" class="text-xs font-semibold px-6 py-2 rounded-xl border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-color); color: var(--text-muted);">
+          Done
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Auth Modal (Sign In / Register / Reset) -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-sm w-full p-6 relative border shadow-2xl" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <button onclick="closeModal('authModal')" class="absolute top-4 right-4 cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      
+      <!-- Modal Tabs: Sign In / Create Account -->
+      <div class="flex items-center justify-center space-x-1 p-1 rounded-2xl mb-5 border" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+        <button id="authTabSignIn" type="button" onclick="switchAuthTab('signin')" class="flex-1 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer" style="background-color: var(--bg-surface); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+          Sign In
+        </button>
+        <button id="authTabSignUp" type="button" onclick="switchAuthTab('signup')" class="flex-1 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer" style="color: var(--text-muted);">
+          Create Account
+        </button>
+      </div>
+
+      <div class="text-center mb-5">
+        <h3 id="authModalTitle" class="text-lg font-bold" style="color: var(--text-primary);">Welcome Back</h3>
+        <p id="authModalSubtitle" class="text-xs mt-1" style="color: var(--text-muted);">Sign in to save creators &amp; access your bookmarks</p>
+      </div>
+
+      <!-- Auth Form -->
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block mb-1 font-medium text-[11px]" style="color: var(--text-secondary);">Email Address</label>
+          <input type="email" id="authEmailInput" required placeholder="you@domain.com" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block font-medium text-[11px]" style="color: var(--text-secondary);">Password</label>
+            <button type="button" id="authForgotPasswordBtn" onclick="handleForgotPassword()" class="text-[11px] text-emerald-500 hover:underline cursor-pointer">Forgot?</button>
+          </div>
+          <input type="password" id="authPasswordInput" required minlength="6" placeholder="At least 6 characters" class="w-full rounded-xl p-2.5 focus:outline-none border" style="background-color: var(--input-bg); border-color: var(--input-border); color: var(--text-primary);">
+        </div>
+
+        <div id="authErrorMessage" class="hidden text-rose-500 text-[11px] bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-xl border border-rose-200 dark:border-rose-900 leading-normal"></div>
+
+        <button type="submit" id="authSubmitBtn" class="w-full py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center space-x-2 text-white shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+          <span id="authSubmitText">Sign In</span>
+        </button>
+
+        <div class="relative my-3 text-center">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t" style="border-color: var(--border-color);"></div></div>
+          <span class="relative px-2 text-[10px] uppercase font-bold" style="background-color: var(--bg-surface); color: var(--text-muted);">Or</span>
+        </div>
+
+        <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 rounded-xl font-semibold text-xs transition cursor-pointer flex items-center justify-center space-x-2 border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+          <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+          <span>Continue with Google</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Saved Creators Modal -->
+  <div id="savedCreatorsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-xl w-full max-h-[85vh] flex flex-col p-6 relative border shadow-2xl" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--border-color);">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-amber-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          <h3 class="text-base font-bold" style="color: var(--text-primary);">Saved Creators</h3>
+          <span id="savedModalCount" class="text-xs px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-500">0</span>
+        </div>
+        <button onclick="closeModal('savedCreatorsModal')" class="cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      </div>
+
+      <div id="savedCreatorsList" class="flex-1 overflow-y-auto py-4 space-y-2.5">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <div class="pt-3 border-t flex justify-end" style="border-color: var(--border-color);">
+        <button onclick="closeModal('savedCreatorsModal')" class="text-xs font-semibold px-5 py-2 rounded-xl border cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Submissions Moderation Modal -->
+  <div id="adminSubmissionsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style="background-color: var(--modal-overlay);">
+    <div class="rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col p-6 relative border shadow-2xl" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+      <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--border-color);">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+            🛡️
+          </div>
+          <h3 class="text-base font-bold" style="color: var(--text-primary);">Channel Moderation Dashboard</h3>
+        </div>
+        <button onclick="closeModal('adminSubmissionsModal')" class="cursor-pointer text-xl" style="color: var(--text-muted);">&times;</button>
+      </div>
+
+      <!-- Filter Tabs: Pending | Approved | All -->
+      <div class="flex items-center space-x-2 py-3 border-b text-xs" style="border-color: var(--border-color);">
+        <button id="adminTabPending" onclick="switchAdminSubmissionsFilter('pending')" class="px-3 py-1 rounded-xl font-bold transition cursor-pointer" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">Pending (<span id="adminPendingCount">0</span>)</button>
+        <button id="adminTabApproved" onclick="switchAdminSubmissionsFilter('approved')" class="px-3 py-1 rounded-xl font-medium transition cursor-pointer" style="background-color: var(--bg-pill); color: var(--text-secondary);">Approved</button>
+        <button id="adminTabAll" onclick="switchAdminSubmissionsFilter('all')" class="px-3 py-1 rounded-xl font-medium transition cursor-pointer" style="background-color: var(--bg-pill); color: var(--text-secondary);">All</button>
+      </div>
+
+      <!-- Submissions List -->
+      <div id="adminSubmissionsList" class="flex-1 overflow-y-auto py-4 space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="pt-3 border-t flex justify-end" style="border-color: var(--border-color);">
+        <button onclick="closeModal('adminSubmissionsModal')" class="text-xs font-semibold px-5 py-2 rounded-xl border cursor-pointer" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">Close</button>
+      </div>
     </div>
   </div>
 
@@ -993,6 +1556,558 @@
   <!-- JAVASCRIPT CONTROLLER                      -->
   <!-- ========================================== -->
   <script>
+    // ==========================================
+    // FIREBASE CLOUD FIRESTORE INITIALIZATION
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1Kx92gUmFgfFtXojWqboUsvjcC4YQFr3k",
+      authDomain: "ytcreatorfinder.firebaseapp.com",
+      projectId: "ytcreatorfinder",
+      storageBucket: "ytcreatorfinder.firebasestorage.app",
+      messagingSenderId: "624679405827",
+      appId: "1:624679405827:web:6141daadbc61a5f5490136",
+      measurementId: "G-26XFYMBNWW"
+    };
+
+    let firestoreDb = null;
+    let firebaseAuth = null;
+    let currentUser = null;
+    let savedCreators = {};
+    let authModalMode = 'signin';
+
+    try {
+      if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        firebase.initializeApp(firebaseConfig);
+        firestoreDb = firebase.firestore();
+        if (firebase.auth) {
+          firebaseAuth = firebase.auth();
+        }
+      }
+    } catch (fbErr) {
+      console.warn('Firebase init notice:', fbErr.message);
+    }
+
+    // ==========================================
+    // FIREBASE AUTHENTICATION & SAVED CREATORS
+    // ==========================================
+    function openAuthModal(mode = 'signin') {
+      authModalMode = mode;
+      switchAuthTab(mode);
+      const errBox = document.getElementById('authErrorMessage');
+      if (errBox) errBox.classList.add('hidden');
+      openModal('authModal');
+    }
+
+    function switchAuthTab(mode) {
+      authModalMode = mode;
+      const tabIn = document.getElementById('authTabSignIn');
+      const tabUp = document.getElementById('authTabSignUp');
+      const title = document.getElementById('authModalTitle');
+      const sub = document.getElementById('authModalSubtitle');
+      const btnText = document.getElementById('authSubmitText');
+      const forgotBtn = document.getElementById('authForgotPasswordBtn');
+      const errBox = document.getElementById('authErrorMessage');
+      if (errBox) errBox.classList.add('hidden');
+
+      if (mode === 'signin') {
+        tabIn.style.backgroundColor = 'var(--bg-surface)';
+        tabIn.style.color = 'var(--text-primary)';
+        tabIn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+        tabIn.style.fontWeight = '700';
+
+        tabUp.style.backgroundColor = 'transparent';
+        tabUp.style.color = 'var(--text-muted)';
+        tabUp.style.boxShadow = 'none';
+        tabUp.style.fontWeight = '500';
+
+        title.textContent = 'Welcome Back';
+        sub.textContent = 'Sign in to save creators & access bookmarks';
+        btnText.textContent = 'Sign In';
+        if (forgotBtn) forgotBtn.classList.remove('hidden');
+      } else {
+        tabUp.style.backgroundColor = 'var(--bg-surface)';
+        tabUp.style.color = 'var(--text-primary)';
+        tabUp.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+        tabUp.style.fontWeight = '700';
+
+        tabIn.style.backgroundColor = 'transparent';
+        tabIn.style.color = 'var(--text-muted)';
+        tabIn.style.boxShadow = 'none';
+        tabIn.style.fontWeight = '500';
+
+        title.textContent = 'Create an Account';
+        sub.textContent = 'Sign up to bookmark creators and track submissions';
+        btnText.textContent = 'Create Account';
+        if (forgotBtn) forgotBtn.classList.add('hidden');
+      }
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      if (!firebaseAuth) {
+        showToast('Authentication service unavailable.');
+        return;
+      }
+      const email = document.getElementById('authEmailInput').value.trim();
+      const password = document.getElementById('authPasswordInput').value;
+      const errBox = document.getElementById('authErrorMessage');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const submitText = document.getElementById('authSubmitText');
+
+      errBox.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.7';
+      const origText = submitText.textContent;
+      submitText.textContent = 'Please wait...';
+
+      try {
+        if (authModalMode === 'signin') {
+          await firebaseAuth.signInWithEmailAndPassword(email, password);
+          showToast('Signed in successfully! 👋');
+        } else {
+          const cred = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+          if (cred && cred.user) {
+            try {
+              await cred.user.sendEmailVerification();
+              showToast('Account created! Verification link sent to ' + email + ' 📩');
+            } catch (vErr) {
+              showToast('Account created successfully! Welcome 🎉');
+            }
+          }
+        }
+        closeModal('authModal');
+        document.getElementById('authForm').reset();
+      } catch (err) {
+        let msg = err.message || 'Authentication failed.';
+        if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          msg = 'Invalid email or password. Please try again.';
+        } else if (err.code === 'auth/email-already-in-use') {
+          msg = 'An account with this email already exists. Try signing in.';
+        } else if (err.code === 'auth/weak-password') {
+          msg = 'Password should be at least 6 characters.';
+        } else if (err.code === 'auth/invalid-email') {
+          msg = 'Please enter a valid email address.';
+        }
+        errBox.textContent = msg;
+        errBox.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitText.textContent = origText;
+      }
+    }
+
+    async function handleForgotPassword() {
+      if (!firebaseAuth) return;
+      const email = document.getElementById('authEmailInput').value.trim();
+      if (!email) {
+        showToast('Please type your email address first.');
+        document.getElementById('authEmailInput').focus();
+        return;
+      }
+      try {
+        await firebaseAuth.sendPasswordResetEmail(email);
+        showToast('Password reset link sent to ' + email + ' 📩');
+      } catch (err) {
+        showToast(err.message || 'Could not send reset email.');
+      }
+    }
+
+    async function handleGoogleSignIn() {
+      if (!firebaseAuth) {
+        showToast('Authentication service unavailable.');
+        return;
+      }
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await firebaseAuth.signInWithPopup(provider);
+        showToast('Signed in with Google successfully! 🎉');
+        closeModal('authModal');
+      } catch (err) {
+        console.warn('Google sign-in notice:', err);
+        const errBox = document.getElementById('authErrorMessage');
+        if (errBox) {
+          if (err.code !== 'auth/popup-closed-by-user') {
+            errBox.textContent = err.message || 'Google sign-in failed. Please try again.';
+            errBox.classList.remove('hidden');
+          }
+        }
+      }
+    }
+
+    async function signOutUser() {
+      if (!firebaseAuth) return;
+      try {
+        await firebaseAuth.signOut();
+        showToast('Signed out successfully.');
+      } catch (err) {
+        showToast('Error signing out.');
+      }
+    }
+
+    function toggleUserDropdown(forceState) {
+      const menu = document.getElementById('userDropdownMenu');
+      if (!menu) return;
+      if (typeof forceState === 'boolean') {
+        if (forceState) menu.classList.remove('hidden');
+        else menu.classList.add('hidden');
+      } else {
+        menu.classList.toggle('hidden');
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('userProfileDropdown');
+      const menu = document.getElementById('userDropdownMenu');
+      if (container && menu && !container.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    const ADMIN_EMAILS = ['hasibul80801@gmail.com'];
+    let allSubmissions = [];
+    let adminSubmissionsFilter = 'pending';
+
+    if (firebaseAuth) {
+      firebaseAuth.onAuthStateChanged(async (user) => {
+        currentUser = user;
+        const signInBtn = document.getElementById('openAuthModalBtn');
+        const userDrop = document.getElementById('userProfileDropdown');
+        const emailLabel = document.getElementById('userEmailLabel');
+        const dropEmail = document.getElementById('dropdownUserEmail');
+        const userInitial = document.getElementById('userInitial');
+        const adminBtn = document.getElementById('adminPanelNavBtn');
+
+        if (user) {
+          if (signInBtn) signInBtn.classList.add('hidden');
+          if (userDrop) userDrop.classList.remove('hidden');
+          const email = user.email || 'Member';
+          if (emailLabel) emailLabel.textContent = email;
+          if (dropEmail) dropEmail.textContent = email;
+          if (userInitial) userInitial.textContent = email.charAt(0).toUpperCase();
+
+          const isAdminUser = ADMIN_EMAILS.includes((user.email || '').toLowerCase());
+          if (isAdminUser) {
+            if (adminBtn) adminBtn.classList.remove('hidden');
+            loadAdminSubmissions();
+          } else {
+            if (adminBtn) adminBtn.classList.add('hidden');
+          }
+
+          await loadUserSavedCreators();
+        } else {
+          if (signInBtn) signInBtn.classList.remove('hidden');
+          if (userDrop) userDrop.classList.add('hidden');
+          if (adminBtn) adminBtn.classList.add('hidden');
+          savedCreators = {};
+          updateSavedBadges();
+          refreshBookmarkIcons();
+        }
+      });
+    }
+
+    async function loadAdminSubmissions() {
+      if (!firestoreDb || !currentUser) return;
+      try {
+        const snap = await firestoreDb.collection('channel_submissions').get();
+        allSubmissions = [];
+        let pendingCount = 0;
+        snap.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          if (data.status === 'pending') pendingCount++;
+          allSubmissions.push(data);
+        });
+        const badge = document.getElementById('pendingSubmissionsBadge');
+        const badge2 = document.getElementById('adminPendingCount');
+        if (badge) badge.textContent = pendingCount;
+        if (badge2) badge2.textContent = pendingCount;
+      } catch (err) {
+        console.warn('Could not load admin submissions:', err.message);
+      }
+    }
+
+    async function openAdminModal() {
+      await loadAdminSubmissions();
+      switchAdminSubmissionsFilter('pending');
+      openModal('adminSubmissionsModal');
+    }
+
+    function switchAdminSubmissionsFilter(filter) {
+      adminSubmissionsFilter = filter;
+      const tabPending = document.getElementById('adminTabPending');
+      const tabApproved = document.getElementById('adminTabApproved');
+      const tabAll = document.getElementById('adminTabAll');
+
+      [tabPending, tabApproved, tabAll].forEach(t => {
+        if (!t) return;
+        t.style.backgroundColor = 'var(--bg-pill)';
+        t.style.color = 'var(--text-secondary)';
+        t.classList.remove('font-bold');
+        t.classList.add('font-medium');
+      });
+
+      if (filter === 'pending' && tabPending) {
+        tabPending.style.backgroundColor = 'var(--accent-btn)';
+        tabPending.style.color = 'var(--accent-btn-text)';
+        tabPending.classList.add('font-bold');
+      } else if (filter === 'approved' && tabApproved) {
+        tabApproved.style.backgroundColor = 'var(--accent-btn)';
+        tabApproved.style.color = 'var(--accent-btn-text)';
+        tabApproved.classList.add('font-bold');
+      } else if (filter === 'all' && tabAll) {
+        tabAll.style.backgroundColor = 'var(--accent-btn)';
+        tabAll.style.color = 'var(--accent-btn-text)';
+        tabAll.classList.add('font-bold');
+      }
+
+      renderAdminSubmissionsList();
+    }
+
+    function renderAdminSubmissionsList() {
+      const container = document.getElementById('adminSubmissionsList');
+      if (!container) return;
+
+      let filtered = allSubmissions;
+      if (adminSubmissionsFilter === 'pending') {
+        filtered = allSubmissions.filter(s => s.status === 'pending');
+      } else if (adminSubmissionsFilter === 'approved') {
+        filtered = allSubmissions.filter(s => s.status === 'approved');
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4">
+            <p class="text-sm font-semibold" style="color: var(--text-primary);">No ${escapeHtml(adminSubmissionsFilter)} submissions found</p>
+            <p class="text-xs mt-1" style="color: var(--text-muted);">Channels submitted by creators will appear here for review.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(sub => {
+        const handleClean = (sub.handle || '').replace(/^@/, '');
+        const ytUrl = `https://www.youtube.com/@${handleClean}`;
+        const firstLetter = (handleClean || 'C').charAt(0).toUpperCase();
+        const isPending = sub.status === 'pending';
+        const isApproved = sub.status === 'approved';
+
+        let statusBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">Pending Review</span>`;
+        if (isApproved) {
+          statusBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Approved &bull; Live</span>`;
+        } else if (sub.status === 'rejected') {
+          statusBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">Rejected</span>`;
+        }
+
+        return `
+          <div class="p-4 rounded-2xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+            <div class="flex items-start space-x-3 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-full bg-violet-600/20 text-violet-400 border border-violet-500/30 flex items-center justify-center font-bold text-sm shrink-0">
+                ${escapeHtml(firstLetter)}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center space-x-2 flex-wrap">
+                  <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="font-bold text-xs hover:underline flex items-center space-x-1" style="color: var(--text-primary);">
+                    <span>@${escapeHtml(handleClean)}</span>
+                    <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  </a>
+                  <span class="text-[10px] px-2 py-0.2 rounded-full font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20">${escapeHtml(sub.niche || 'General')}</span>
+                  ${statusBadge}
+                </div>
+                ${sub.reason ? `<p class="text-[11px] mt-1 line-clamp-2" style="color: var(--text-secondary);">${escapeHtml(sub.reason)}</p>` : ''}
+                ${sub.contact ? `<p class="text-[10px] mt-1 font-mono" style="color: var(--text-muted);">Contact: ${escapeHtml(sub.contact)}</p>` : ''}
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2 shrink-0 sm:self-center">
+              ${!isApproved ? `
+                <button onclick="updateSubmissionStatus('${sub.id}', 'approved')" class="px-3 py-1.5 rounded-xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-500 transition cursor-pointer flex items-center space-x-1 shadow-sm">
+                  <span>&check; Approve</span>
+                </button>
+              ` : ''}
+              ${isPending || isApproved ? `
+                <button onclick="updateSubmissionStatus('${sub.id}', 'rejected')" class="px-3 py-1.5 rounded-xl font-medium text-xs text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition cursor-pointer">
+                  <span>&times; Reject</span>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function updateSubmissionStatus(docId, newStatus) {
+      if (!firestoreDb || !currentUser) return;
+      try {
+        await firestoreDb.collection('channel_submissions').doc(docId).update({
+          status: newStatus
+        });
+        showToast(`Channel status marked as ${newStatus}!`);
+        await loadAdminSubmissions();
+        renderAdminSubmissionsList();
+      } catch (err) {
+        showToast('Error updating status: ' + err.message);
+      }
+    }
+
+    async function loadUserSavedCreators() {
+      if (!currentUser || !firestoreDb) return;
+      try {
+        const snap = await firestoreDb.collection('users').doc(currentUser.uid).collection('saved_creators').get();
+        savedCreators = {};
+        snap.forEach(doc => {
+          savedCreators[doc.id] = doc.data();
+        });
+        updateSavedBadges();
+        refreshBookmarkIcons();
+        renderSavedCreatorsList();
+      } catch (e) {
+        console.warn('Could not load saved creators:', e);
+      }
+    }
+
+    function updateSavedBadges() {
+      const count = Object.keys(savedCreators).length;
+      const b1 = document.getElementById('savedCountBadge');
+      const b2 = document.getElementById('savedModalCount');
+      if (b1) b1.textContent = count;
+      if (b2) b2.textContent = count;
+    }
+
+    function refreshBookmarkIcons() {
+      document.querySelectorAll('.bookmark-btn').forEach(btn => {
+        const key = btn.dataset.channelKey;
+        if (!key) return;
+        const isSaved = !!savedCreators[key];
+        btn.style.color = isSaved ? '#f59e0b' : 'var(--text-muted)';
+        const svg = btn.querySelector('svg');
+        if (svg) {
+          if (isSaved) {
+            svg.classList.add('fill-current');
+            svg.classList.remove('fill-none');
+          } else {
+            svg.classList.remove('fill-current');
+            svg.classList.add('fill-none');
+          }
+        }
+      });
+    }
+
+    async function toggleSaveCreator(c, btnEl) {
+      if (!currentUser) {
+        openAuthModal('signin');
+        showToast('Please sign in to bookmark creators! 🌟');
+        return;
+      }
+      const key = (c.handle || c.id || c.title || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      if (!key) return;
+
+      const isAlreadySaved = !!savedCreators[key];
+      const docRef = firestoreDb.collection('users').doc(currentUser.uid).collection('saved_creators').doc(key);
+
+      if (isAlreadySaved) {
+        delete savedCreators[key];
+        updateSavedBadges();
+        refreshBookmarkIcons();
+        renderSavedCreatorsList();
+        showToast('Removed from saved creators');
+        try {
+          await docRef.delete();
+        } catch (e) {
+          console.warn('Error deleting bookmark:', e);
+        }
+      } else {
+        const creatorData = {
+          title: c.title || '',
+          handle: c.handle || '',
+          subscribersFormatted: c.subscribersFormatted || (typeof formatSubCount === 'function' ? formatSubCount(c.subscribers) : (c.subscribers || '')),
+          niche: c.niche || 'YouTube Creator',
+          country: c.countryName || c.country || '',
+          channelUrl: c.channelUrl || '',
+          description: c.description || (c.comment ? c.comment.slice(0, 150) : ''),
+          savedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        savedCreators[key] = creatorData;
+        updateSavedBadges();
+        refreshBookmarkIcons();
+        renderSavedCreatorsList();
+        showToast(`Saved ${c.title || c.handle || 'creator'} to bookmarks! ⭐`);
+        try {
+          await docRef.set(creatorData);
+        } catch (e) {
+          console.warn('Error saving bookmark:', e);
+        }
+      }
+    }
+
+    function renderSavedCreatorsList() {
+      const container = document.getElementById('savedCreatorsList');
+      if (!container) return;
+      const keys = Object.keys(savedCreators);
+      if (keys.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 px-4">
+            <div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style="background-color: var(--bg-pill);">
+              <svg class="w-6 h-6 text-amber-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            </div>
+            <p class="text-sm font-semibold" style="color: var(--text-primary);">No saved creators yet</p>
+            <p class="text-xs mt-1" style="color: var(--text-muted);">Click the bookmark star icon on any creator in Discover or Find mode to save them here for quick access.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = keys.map(k => {
+        const c = savedCreators[k];
+        const firstLetter = (c.title || c.handle || 'C').replace(/^@/, '').trim().charAt(0).toUpperCase();
+        return `
+          <div class="p-3.5 rounded-2xl flex items-center justify-between gap-3 border transition" style="background-color: var(--bg-pill); border-color: var(--border-color);">
+            <div class="flex items-center space-x-3 min-w-0 flex-1">
+              <div class="w-9 h-9 rounded-full bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 flex items-center justify-center font-bold text-xs shrink-0">
+                ${escapeHtml(firstLetter)}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center space-x-2">
+                  <span class="font-bold text-xs truncate" style="color: var(--text-primary);">${escapeHtml(c.title)}</span>
+                  <span class="text-[11px] font-mono" style="color: var(--text-muted);">${escapeHtml(c.handle)}</span>
+                </div>
+                <div class="text-[10px] mt-0.5 truncate flex items-center space-x-2" style="color: var(--text-secondary);">
+                  <span>${escapeHtml(c.subscribersFormatted)}</span>
+                  <span>&bull;</span>
+                  <span class="text-amber-500 font-medium">${escapeHtml(c.niche)}</span>
+                  <span>&bull;</span>
+                  <span>${escapeHtml(c.country)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 shrink-0">
+              <button onclick="removeSavedCreator('${k}')" class="text-rose-500 hover:text-rose-400 p-1.5 rounded-lg text-xs font-semibold cursor-pointer" title="Remove bookmark">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+              <a href="${sanitizeUrl(c.channelUrl)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center space-x-1" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">
+                <span>Visit</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function removeSavedCreator(key) {
+      if (!currentUser || !firestoreDb) return;
+      delete savedCreators[key];
+      updateSavedBadges();
+      refreshBookmarkIcons();
+      renderSavedCreatorsList();
+      showToast('Creator removed from bookmarks');
+      try {
+        await firestoreDb.collection('users').doc(currentUser.uid).collection('saved_creators').doc(key).delete();
+      } catch (e) {
+        console.warn('Error deleting bookmark:', e);
+      }
+    }
+
     // ==========================================
     // 1. THEME SWITCHER (SUN / MOON DYNAMIC)
     // ==========================================
@@ -1023,7 +2138,7 @@
 
     function getSavedTheme() {
       try {
-        return localStorage.getItem('creatorscout_theme') || 'dark';
+        return localStorage.getItem('ytcf_theme') || localStorage.getItem('creatorscout_theme') || 'dark';
       } catch (e) {
         return 'dark';
       }
@@ -1040,7 +2155,7 @@
         themeToggleBtn.title = 'Switch to Dark Mode';
       }
       try {
-        localStorage.setItem('creatorscout_theme', theme);
+        localStorage.setItem('ytcf_theme', theme);
       } catch (e) {}
     }
 
@@ -1104,8 +2219,8 @@
     const dirCountDisplay = document.getElementById('dirCountDisplay');
     const dirActiveNicheLabel = document.getElementById('dirActiveNicheLabel');
     const dirActiveSizeLabel = document.getElementById('dirActiveSizeLabel');
+    const dirActiveCollabLabel = document.getElementById('dirActiveCollabLabel');
     const topBrowsingSizeLabel = document.getElementById('topBrowsingSizeLabel');
-    const bannerBrowsingSize = document.getElementById('bannerBrowsingSize');
     const dirLoadingIndicator = document.getElementById('dirLoadingIndicator');
     const dirCardsContainer = document.getElementById('dirCardsContainer');
     const dirLoadMoreContainer = document.getElementById('dirLoadMoreContainer');
@@ -1116,6 +2231,7 @@
 
     let currentNextPageToken = null;
     let isDirLoading = false;
+    let currentCollab = 'None';
     const seenChannelKeys = new Set();
 
     // Avatar Color Palette
@@ -1138,7 +2254,6 @@
       currentMaxSubs = parseInt(btn.dataset.max, 10);
       dirActiveSizeLabel.textContent = btn.textContent;
       topBrowsingSizeLabel.textContent = btn.textContent;
-      bannerBrowsingSize.textContent = btn.textContent + ' creator';
       loadDiscoverChannels();
     });
 
@@ -1157,6 +2272,11 @@
       if (!btn) return;
       document.querySelectorAll('#collabPillGroup .pill-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      currentCollab = btn.dataset.collab || 'None';
+      if (dirActiveCollabLabel) {
+        dirActiveCollabLabel.textContent = (currentCollab && currentCollab !== 'None' && currentCollab !== 'All') ? (' • ' + currentCollab) : '';
+      }
+      loadDiscoverChannels();
     });
 
     document.getElementById('regionPillGroup').addEventListener('click', (e) => {
@@ -1179,15 +2299,20 @@
 
     // Helper to resolve API endpoints whether running via localhost:3000, file://, or live server
     function getApiEndpoint(endpoint) {
-      if (window.location.protocol === 'file:' || (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.hostname.includes('render') && !window.location.hostname.includes('vercel'))) {
+      if (window.location.protocol === 'file:') {
         return 'http://localhost:3000' + endpoint;
       }
       return endpoint;
     }
 
     // Fetch Discover Channels from Backend (Supports Initial Fetch & Pagination)
+    let dirAbortController = null;
     async function loadDiscoverChannels(isLoadMore = false) {
-      if (isDirLoading) return;
+      if (isDirLoading && isLoadMore) return;
+      if (dirAbortController && !isLoadMore) {
+        try { dirAbortController.abort(); } catch (e) {}
+      }
+      dirAbortController = new AbortController();
       isDirLoading = true;
 
       let apiKey = '';
@@ -1211,17 +2336,45 @@
       try {
         const res = await fetch(getApiEndpoint('/api/discover'), {
           method: 'POST',
+          signal: dirAbortController.signal,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             niche: currentNiche,
             minSubs: currentMinSubs,
             maxSubs: currentMaxSubs,
             country: currentCountry,
+            collab: currentCollab,
             query: currentQuery,
             apiKey: apiKey,
             pageToken: isLoadMore ? (currentNextPageToken || '') : ''
           })
         });
+
+        if (!res.ok) {
+          let errorMsg = 'Failed to load channels';
+          try {
+            const errData = await res.json();
+            if (errData && errData.error) errorMsg = errData.error;
+          } catch (e) {
+            if (res.status === 429) {
+              errorMsg = 'Too many requests. Please wait a few seconds and try again.';
+            } else if (res.status >= 500) {
+              errorMsg = 'Server is currently busy. Please refresh or try again in a few moments.';
+            }
+          }
+          if (!isLoadMore) {
+            dirCardsContainer.innerHTML = `
+              <div class="rounded-2xl p-8 text-center border" style="background-color: var(--bg-surface); border-color: var(--border-color);">
+                <p class="text-sm font-semibold text-amber-500">${escapeHtml(errorMsg)}</p>
+                <p class="text-xs mt-2" style="color: var(--text-muted);">You can enter your personal free YouTube API key in the top navbar or explore URL Scout mode.</p>
+              </div>
+            `;
+            dirCountDisplay.textContent = '0';
+          } else {
+            showToast(errorMsg);
+          }
+          return;
+        }
 
         const data = await res.json();
         const channels = data.channels || [];
@@ -1251,6 +2404,9 @@
             const firstLetter = (c.title || c.handle || 'C').replace(/^@/, '').trim().charAt(0).toUpperCase();
             const colorTheme = AVATAR_PALETTE[seenChannelKeys.size % AVATAR_PALETTE.length];
 
+            const channelKey = (c.handle || c.id || c.title || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const isSaved = !!savedCreators[channelKey];
+
             card.innerHTML = `
               <div class="flex items-start space-x-3.5 min-w-0 flex-1">
                 <div 
@@ -1278,16 +2434,22 @@
                 </div>
               </div>
 
-              <!-- Status Badge & Action Buttons (Visit + Copy @mention) -->
+              <!-- Status Badge & Action Buttons (Visit + Copy @mention + Bookmark) -->
               <div class="flex items-center space-x-2.5 shrink-0 sm:self-center">
                 <span class="hidden md:inline-flex items-center space-x-1.5 text-[11px] font-medium px-2.5 py-1 rounded-full mr-1 border" style="background-color: var(--tag-collab-bg); color: var(--tag-collab-text); border-color: var(--tag-collab-border);">
                   <span class="w-1.5 h-1.5 rounded-full" style="background-color: var(--tag-collab-text);"></span>
-                  <span>Open to collabs</span>
+                  <span>${escapeHtml(c.activeCollabBadge || c.status || 'Active Creator')}</span>
                 </span>
-                
-                <button type="button" class="copy-handle-btn text-xs font-medium px-3 py-2 rounded-xl transition cursor-pointer border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
-                  Copy @mention
+
+                <button type="button" data-channel-key="${channelKey}" class="bookmark-btn p-2 rounded-xl transition cursor-pointer border" title="${isSaved ? 'Remove from bookmarks' : 'Save creator to bookmarks'}" style="background-color: var(--bg-pill); border-color: var(--border-color); color: ${isSaved ? '#f59e0b' : 'var(--text-muted)'};">
+                  <svg class="w-3.5 h-3.5 ${isSaved ? 'fill-current' : 'fill-none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                 </button>
+                
+                ${c.handle ? `
+                  <button type="button" class="copy-handle-btn text-xs font-medium px-3 py-2 rounded-xl transition cursor-pointer border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+                    Copy @mention
+                  </button>
+                ` : ''}
 
                 <a 
                   href="${sanitizeUrl(c.channelUrl)}" 
@@ -1302,9 +2464,19 @@
               </div>
             `;
 
-            card.querySelector('.copy-handle-btn').addEventListener('click', () => {
-              copyHandle(c.handle);
-            });
+            const bookmarkBtn = card.querySelector('.bookmark-btn');
+            if (bookmarkBtn) {
+              bookmarkBtn.addEventListener('click', () => {
+                toggleSaveCreator(c, bookmarkBtn);
+              });
+            }
+
+            const copyBtn = card.querySelector('.copy-handle-btn');
+            if (copyBtn) {
+              copyBtn.addEventListener('click', () => {
+                copyHandle(c.handle);
+              });
+            }
 
             dirCardsContainer.appendChild(card);
           });
@@ -1321,6 +2493,7 @@
         }
 
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error(err);
         if (!isLoadMore) {
           dirCardsContainer.innerHTML = `
@@ -1383,8 +2556,6 @@
     const safeBatchesContainer = document.getElementById('safeBatchesContainer');
     const batchSize3Btn = document.getElementById('batchSize3Btn');
     const batchSize5Btn = document.getElementById('batchSize5Btn');
-    const timestampsSection = document.getElementById('timestampsSection');
-    const timestampsList = document.getElementById('timestampsList');
 
     let currentCreators = [];
     let currentBatchSize = 5;
@@ -1412,7 +2583,9 @@
       apiStatusBadge.textContent = 'Key Saved ✓';
       apiKeySection.classList.add('hidden');
       showToast('API Key saved securely!');
-      loadDiscoverChannels();
+      if (!discoverViewSection.classList.contains('hidden')) {
+        loadDiscoverChannels();
+      }
     });
 
     const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
@@ -1424,7 +2597,9 @@
         apiKeyInput.value = '';
         apiStatusBadge.textContent = 'API Key ↗';
         showToast('API Key removed from browser storage');
-        loadDiscoverChannels();
+        if (!discoverViewSection.classList.contains('hidden')) {
+          loadDiscoverChannels();
+        }
       });
     }
 
@@ -1434,7 +2609,13 @@
 
     toggleMoreFiltersBtn.addEventListener('click', () => {
       moreFiltersSection.classList.toggle('hidden');
-      toggleMoreFiltersBtn.textContent = moreFiltersSection.classList.contains('hidden') ? 'Options' : 'Hide Options';
+      const isHidden = moreFiltersSection.classList.contains('hidden');
+      const span = document.getElementById('moreFiltersBtnText');
+      if (span) {
+        span.textContent = isHidden ? 'More' : 'Less';
+      } else {
+        toggleMoreFiltersBtn.textContent = isHidden ? 'More' : 'Less';
+      }
     });
 
     pasteBtn.addEventListener('click', async () => {
@@ -1447,17 +2628,47 @@
       }
     });
 
+    let toastTimeout = null;
     function showToast(msg) {
+      if (toastTimeout) clearTimeout(toastTimeout);
       toast.textContent = msg;
       toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
+      toastTimeout = setTimeout(() => {
         toast.classList.add('translate-y-20', 'opacity-0');
       }, 2200);
     }
 
     function copyHandle(handle) {
-      navigator.clipboard.writeText(handle);
-      showToast('Copied ' + handle);
+      if (!handle) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(handle).then(() => {
+          showToast('Copied ' + handle);
+        }).catch(() => {
+          fallbackCopyText(handle);
+        });
+      } else {
+        fallbackCopyText(handle);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (success) {
+          showToast('Copied ' + text);
+        } else {
+          showToast('Failed to copy');
+        }
+      } catch (err) {
+        showToast('Failed to copy');
+      }
     }
 
     function openModal(id) {
@@ -1467,6 +2678,110 @@
     function closeModal(id) {
       document.getElementById(id).classList.add('hidden');
       document.body.style.overflow = 'auto';
+      if (id === 'submitChannelModal') {
+        const formView = document.getElementById('submitFormView');
+        const successView = document.getElementById('submitSuccessView');
+        if (formView && successView) {
+          formView.classList.remove('hidden');
+          successView.classList.add('hidden');
+        }
+      }
+    }
+
+    // ==========================================
+    // SUBMIT MY CHANNEL HANDLERS
+    // ==========================================
+    const submitChannelForm = document.getElementById('submitChannelForm');
+    const submitFormView = document.getElementById('submitFormView');
+    const submitSuccessView = document.getElementById('submitSuccessView');
+    const submitChannelError = document.getElementById('submitChannelError');
+    const submitChannelBtn = document.getElementById('submitChannelBtn');
+
+    if (submitChannelForm) {
+      submitChannelForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitChannelError.classList.add('hidden');
+        submitChannelBtn.disabled = true;
+        submitChannelBtn.textContent = 'Submitting...';
+
+        const payload = {
+          channelHandle: document.getElementById('subHandle').value.trim(),
+          channelName: document.getElementById('subName').value.trim(),
+          niche: document.getElementById('subNiche').value,
+          subRange: document.getElementById('subSize').value,
+          country: document.getElementById('subCountry').value,
+          collabType: document.getElementById('subCollab').value,
+          contactEmail: document.getElementById('subContact').value.trim()
+        };
+
+        let directSaved = false;
+        // Direct Cloud Firestore write
+        if (firestoreDb) {
+          try {
+            const reasonParts = [
+              payload.channelName ? `Name: ${payload.channelName}` : '',
+              payload.subRange ? `Subs: ${payload.subRange}` : '',
+              payload.country ? `Country: ${payload.country}` : '',
+              payload.collabType ? `Collab: ${payload.collabType}` : ''
+            ].filter(Boolean).join(' | ');
+
+            await firestoreDb.collection("channel_submissions").add({
+              handle: payload.channelHandle.slice(0, 100),
+              niche: payload.niche.toLowerCase().slice(0, 50),
+              reason: reasonParts ? reasonParts.slice(0, 500) : '',
+              contact: (payload.contactEmail || '').slice(0, 100),
+              submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              status: "pending"
+            });
+            directSaved = true;
+          } catch (fsWriteErr) {
+            console.warn('Firestore direct write notice:', fsWriteErr);
+          }
+        }
+
+        try {
+          const res = await fetch(getApiEndpoint('/api/submit-channel'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok && !directSaved) {
+            throw new Error(data.error || 'Failed to submit channel.');
+          }
+
+          submitFormView.classList.add('hidden');
+          submitSuccessView.classList.remove('hidden');
+          showToast('Channel submitted for review!');
+        } catch (err) {
+          if (directSaved) {
+            submitFormView.classList.add('hidden');
+            submitSuccessView.classList.remove('hidden');
+            showToast('Channel submitted for review!');
+          } else {
+            submitChannelError.textContent = err.message || 'Something went wrong. Please try again.';
+            submitChannelError.classList.remove('hidden');
+          }
+        } finally {
+          submitChannelBtn.disabled = false;
+          submitChannelBtn.textContent = 'Submit Channel (Free)';
+        }
+      });
+    }
+
+    function shareSubmissionOnTwitter() {
+      const siteUrl = window.location.origin;
+      const text = encodeURIComponent(`I just got listed on YTCreatorFinder! Looking to collaborate with other creators in my niche: ${siteUrl} #YouTuber #Collaboration`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+    }
+
+    function copySubmissionLink() {
+      const siteUrl = window.location.origin;
+      navigator.clipboard.writeText(siteUrl).then(() => {
+        showToast('Link copied to clipboard!');
+      }).catch(() => {
+        showToast('Copy: ' + siteUrl);
+      });
     }
 
     // Video URL Search Trigger
@@ -1529,8 +2844,8 @@
       } catch (err) {
         console.error(err);
         let msg = err.message || 'Unknown error';
-        if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.toLowerCase().includes('fetch')) {
-          msg = 'Server connection failed. Make sure your local server is running and you are accessing the page through http://localhost:3000 (not opening index.html directly as a file).';
+        if (msg === 'Failed to fetch' || msg.includes('NetworkError')) {
+          msg = 'Server connection failed. Make sure your server is reachable and try again.';
         }
         errorMessage.textContent = msg;
         errorState.classList.remove('hidden');
@@ -1542,8 +2857,7 @@
 
     function highlightTimestampsInText(rawText) {
       if (!rawText) return '';
-      const safe = escapeHtml(rawText);
-      return safe.replace(/\b((?:[0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9])\b/g, '<span class="timestamp-badge">$1</span>');
+      return escapeHtml(rawText);
     }
 
     function formatRelativeTime(dateString) {
@@ -1590,7 +2904,6 @@
       updateMentionsText('space');
       updateDescriptionBox();
       renderSafeBatches();
-      renderTimestamps(currentHighlights);
 
       creatorsGrid.innerHTML = '';
       if (currentCreators.length === 0) {
@@ -1615,6 +2928,8 @@
           const timeAgo = formatRelativeTime(creator.commentDate);
           const safeChannelUrl = sanitizeUrl(creator.channelUrl);
           const highlightedComment = highlightTimestampsInText(creator.comment);
+          const channelKey = (creator.handle || creator.channelUrl || creator.title || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+          const isSaved = !!savedCreators[channelKey];
 
           card.innerHTML = `
             <div>
@@ -1627,7 +2942,7 @@
                 </div>
                 <div class="min-w-0 flex-1">
                   <a href="${safeChannelUrl}" target="_blank" rel="noopener noreferrer" class="font-bold text-sm truncate block" style="color: var(--text-primary);">
-                    ${escapeHtml(creator.handle)}
+                    ${escapeHtml(creator.handle || creator.title)}
                   </a>
                   <div class="text-[11px] truncate mt-0.5" style="color: var(--text-muted);">
                     ${escapeHtml(countryCode)} &bull; ${escapeHtml(subsFormatted)} &bull; ${escapeHtml(timeAgo)}
@@ -1640,26 +2955,47 @@
               </div>
             </div>
 
-            <div class="pt-2 border-t flex items-center justify-between" style="border-color: var(--border-color);">
-              <button type="button" class="copy-handle-btn text-xs font-medium px-3 py-1.5 rounded-lg transition cursor-pointer border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
-                Copy @mention
-              </button>
-              <a href="${safeChannelUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1" style="background-color: var(--accent-btn); color: var(--accent-btn-text);" title="Visit YouTube channel">
+            <div class="pt-2 border-t flex items-center justify-between gap-1" style="border-color: var(--border-color);">
+              <div class="flex items-center space-x-1.5">
+                <button type="button" data-channel-key="${channelKey}" class="bookmark-btn p-1.5 rounded-lg transition cursor-pointer border" title="${isSaved ? 'Remove from bookmarks' : 'Save creator to bookmarks'}" style="background-color: var(--bg-pill); border-color: var(--border-color); color: ${isSaved ? '#f59e0b' : 'var(--text-muted)'};">
+                  <svg class="w-3.5 h-3.5 ${isSaved ? 'fill-current' : 'fill-none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                </button>
+                ${creator.handle ? `
+                  <button type="button" class="copy-handle-btn text-xs font-medium px-2.5 py-1.5 rounded-lg transition cursor-pointer border" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
+                    Copy @mention
+                  </button>
+                ` : `
+                  <span class="text-[11px] truncate max-w-[80px]" style="color: var(--text-muted);">${escapeHtml(creator.title)}</span>
+                `}
+              </div>
+              <a href="${safeChannelUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shrink-0" style="background-color: var(--accent-btn); color: var(--accent-btn-text);" title="Visit YouTube channel">
                 <span>Visit</span>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
               </a>
             </div>
           `;
 
-          card.querySelector('.copy-handle-btn').addEventListener('click', () => {
-            copyHandle(creator.handle);
-          });
+          const bookmarkBtn = card.querySelector('.bookmark-btn');
+          if (bookmarkBtn) {
+            bookmarkBtn.addEventListener('click', () => {
+              toggleSaveCreator(creator, bookmarkBtn);
+            });
+          }
+
+          const copyBtn = card.querySelector('.copy-handle-btn');
+          if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+              copyHandle(creator.handle);
+            });
+          }
 
           creatorsGrid.appendChild(card);
         });
       }
 
       resultsSection.classList.remove('hidden');
+      const scoutGridContainer = document.getElementById('scoutGridContainer');
+      if (scoutGridContainer) scoutGridContainer.classList.remove('hidden');
       resultsSection.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -1668,10 +3004,11 @@
         mentionsTextArea.value = '';
         return;
       }
+      const validHandles = currentCreators.map(c => c.handle).filter(Boolean);
       if (format === 'newline') {
-        mentionsTextArea.value = currentCreators.map(c => c.handle).join('\n');
+        mentionsTextArea.value = validHandles.join('\n');
       } else {
-        mentionsTextArea.value = currentCreators.map(c => c.handle).join(' ');
+        mentionsTextArea.value = validHandles.join(' ');
       }
     }
 
@@ -1700,7 +3037,7 @@
       }
       const count = parseInt(descCountSelect.value, 10) || 5;
       const topCreators = currentCreators.slice(0, count);
-      const handles = topCreators.map(c => c.handle).join(' ');
+      const handles = topCreators.map(c => c.handle).filter(Boolean).join(' ');
       const style = descStyleSelect.value;
 
       let text = '';
@@ -1737,7 +3074,9 @@
 
       batches.forEach((batch, idx) => {
         const batchNum = idx + 1;
-        const batchHandles = batch.map(c => c.handle).join(' ');
+        const validBatch = batch.filter(c => c.handle);
+        const batchHandles = validBatch.map(c => c.handle).join(' ');
+        if (!batchHandles) return;
         const row = document.createElement('div');
         row.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl text-xs border';
         row.style.backgroundColor = 'var(--code-bg)';
@@ -1781,29 +3120,7 @@
     });
 
     function renderTimestamps(highlights) {
-      timestampsList.innerHTML = '';
-      if (!highlights || highlights.length === 0) {
-        timestampsSection.classList.add('hidden');
-        return;
-      }
-
-      timestampsSection.classList.remove('hidden');
-      highlights.forEach(h => {
-        const pill = document.createElement('div');
-        pill.className = 'rounded-xl px-3 py-2 text-xs flex items-center space-x-2 transition cursor-pointer border';
-        pill.style.backgroundColor = 'var(--timestamp-bg)';
-        pill.style.borderColor = 'var(--timestamp-border)';
-        pill.title = h.sampleText ? 'Comment: "' + h.sampleText + '"' : '';
-        pill.innerHTML = `
-          <span class="font-mono font-bold" style="color: var(--timestamp-text);">${escapeHtml(h.timestamp)}</span>
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md" style="background-color: var(--bg-pill); color: var(--text-primary);">${h.mentions} mentions</span>
-        `;
-        pill.onclick = () => {
-          navigator.clipboard.writeText(h.timestamp);
-          showToast('Copied timestamp ' + h.timestamp);
-        };
-        timestampsList.appendChild(pill);
-      });
+      // Time span / Retention Hooks section removed per user request
     }
 
     function triggerCsvDownload() {
@@ -1830,20 +3147,20 @@
       ];
       
       const rows = currentCreators.map(c => [
-        sanitizeCsvCell(c.title || ''),
-        sanitizeCsvCell(c.handle || ''),
-        sanitizeCsvCell(c.channelUrl || ''),
-        sanitizeCsvCell(c.countryCode || ''),
-        sanitizeCsvCell(c.countryName || ''),
-        sanitizeCsvCell(c.verificationType || ''),
+        sanitizeCsvCell(c.title || '', false),
+        sanitizeCsvCell(c.handle || '', true),
+        sanitizeCsvCell(c.channelUrl || '', false),
+        sanitizeCsvCell(c.countryCode || '', false),
+        sanitizeCsvCell(c.countryName || '', false),
+        sanitizeCsvCell(c.verificationType || '', false),
         c.subscribers !== null ? c.subscribers : 'Hidden',
         c.videoCount,
-        sanitizeCsvCell(c.latestUploadDate || 'N/A'),
+        sanitizeCsvCell(c.latestUploadDate || 'N/A', false),
         c.daysSinceUpload !== null ? c.daysSinceUpload : 'N/A',
-        sanitizeCsvCell(c.activityLabel || 'Unknown'),
-        sanitizeCsvCell((c.comment || '').replace(/\n/g, ' ')),
+        sanitizeCsvCell(c.activityLabel || 'Unknown', false),
+        sanitizeCsvCell((c.comment || '').replace(/\n/g, ' '), false),
         c.commentLikes,
-        sanitizeCsvCell(c.commentDate || '')
+        sanitizeCsvCell(c.commentDate || '', false)
       ]);
 
       const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
@@ -1851,7 +3168,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'CreatorScout_Export_' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.download = 'YTCreatorFinder_Export_' + new Date().toISOString().slice(0, 10) + '.csv';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1872,10 +3189,12 @@
       return '#';
     }
 
-    function sanitizeCsvCell(val) {
+    function sanitizeCsvCell(val, allowAt = false) {
       if (val === null || val === undefined) return '""';
       let str = String(val).replace(/[\r\n]+/g, ' ').trim();
-      if (/^[=\+\-@\t]/.test(str)) {
+      // Prevent spreadsheet formula injection (=, +, -, @, tab) safely
+      const formulaRegex = allowAt ? /^[=\+\-\t]/ : /^[=\+\-@\t]/;
+      if (formulaRegex.test(str)) {
         str = "'" + str;
       }
       return '"' + str.replace(/"/g, '""') + '"';
@@ -1892,7 +3211,8 @@
     }
 
     // Default: Load Discover Channels on Page Load
-    loadDiscoverChannels();
+    // Default: URL Scout on startup
+    switchView('scout');
   </script>
 </body>
 </html>

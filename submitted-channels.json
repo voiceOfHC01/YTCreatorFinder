@@ -1,0 +1,60 @@
+[
+  {
+    "handle": "@TechWithHasib",
+    "title": "Tech With Hasib",
+    "niche": "Tech",
+    "country": "US",
+    "subRange": "1k-10k",
+    "collabType": "Podcast guest",
+    "email": "",
+    "submittedAt": "2026-11-10T01:56:33.950Z"
+  },
+  {
+    "id": "sub_1794278203029",
+    "handle": "@mkbhd",
+    "title": "MKBHD",
+    "niche": "Tech",
+    "country": "US",
+    "subscribers": 150000,
+    "subRange": "100k+",
+    "collabType": "General Collabs",
+    "email": "",
+    "submittedAt": "2026-11-10T02:36:43.029Z"
+  },
+  {
+    "id": "sub_1794278218526",
+    "handle": "@test1",
+    "title": "test1",
+    "niche": "Tech",
+    "country": "US",
+    "subscribers": 5000,
+    "subRange": "1k - 10k",
+    "collabType": "General Collabs",
+    "email": "",
+    "submittedAt": "2026-11-10T02:36:58.526Z"
+  },
+  {
+    "id": "sub_1794278218539",
+    "handle": "@test2",
+    "title": "test2",
+    "niche": "Tech",
+    "country": "US",
+    "subscribers": 5000,
+    "subRange": "1k - 10k",
+    "collabType": "General Collabs",
+    "email": "",
+    "submittedAt": "2026-11-10T02:36:58.539Z"
+  },
+  {
+    "id": "sub_1794278218546",
+    "handle": "@test3",
+    "title": "test3",
+    "niche": "Tech",
+    "country": "US",
+    "subscribers": 5000,
+    "subRange": "1k - 10k",
+    "collabType": "General Collabs",
+    "email": "",
+    "submittedAt": "2026-11-10T02:36:58.546Z"
+  }
+]
