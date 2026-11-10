@@ -118,7 +118,13 @@ const COUNTRY_NAMES = {
   SE: 'Sweden',
   SG: 'Singapore',
   AE: 'United Arab Emirates',
-  JP: 'Japan'
+  JP: 'Japan',
+  IN: 'India',
+  KR: 'South Korea',
+  ES: 'Spain',
+  IT: 'Italy',
+  IS: 'Iceland',
+  BE: 'Belgium'
 };
 
 const COUNTRY_FLAGS = {
@@ -137,7 +143,21 @@ const COUNTRY_FLAGS = {
   SE: '🇸🇪',
   SG: '🇸🇬',
   AE: '🇦🇪',
-  JP: '🇯🇵'
+  JP: '🇯🇵',
+  IN: '🇮🇳',
+  KR: '🇰🇷',
+  ES: '🇪🇸',
+  IT: '🇮🇹',
+  IS: '🇮🇸',
+  BE: '🇧🇪'
+};
+
+const REGION_COUNTRY_MAP = {
+  'EUROPE': ['GB', 'DE', 'FR', 'NL', 'SE', 'IE', 'IT', 'ES', 'AT', 'BE', 'CH', 'NO', 'FI', 'IS', 'PL'],
+  'ASIA': ['JP', 'SG', 'AE', 'IN', 'KR', 'MY', 'PH', 'TH', 'ID'],
+  'NORTH_AMERICA': ['US', 'CA'],
+  'OCEANIA': ['AU', 'NZ'],
+  'TIER1': ['US', 'GB', 'CA', 'AU', 'DE', 'NL', 'SE', 'NO', 'CH', 'SG', 'JP', 'FR', 'IT', 'ES']
 };
 
 // Known spam and bot patterns to protect data quality
@@ -241,8 +261,11 @@ function verifyCountry(channel, targetCountry, filterMode) {
     };
   }
 
-  // List of countries to check (single or tier-1 bundle)
-  const allowedCodes = targetCountry === 'TIER1' ? ['US', 'GB', 'CA', 'AU', 'DE'] : [targetCountry];
+  // List of countries to check (single or tier-1 / regional bundle)
+  let allowedCodes = [targetCountry];
+  if (REGION_COUNTRY_MAP[targetCountry]) {
+    allowedCodes = REGION_COUNTRY_MAP[targetCountry];
+  }
 
   // 1. Check official YouTube country setting
   if (officialCountry && allowedCodes.includes(officialCountry)) {
@@ -548,9 +571,14 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
       res = res.filter(c => c.niche && c.niche.toLowerCase() === reqNiche.toLowerCase());
     }
     
-    // Country filter
-    if (reqCountry && reqCountry !== 'ANY') {
-      res = res.filter(c => !c.country || c.country.toUpperCase() === reqCountry.toUpperCase());
+    // Country & Regional filter
+    if (reqCountry && reqCountry !== 'ANY' && reqCountry !== 'ALL' && reqCountry !== 'WORLD') {
+      const up = reqCountry.toUpperCase();
+      if (REGION_COUNTRY_MAP[up]) {
+        res = res.filter(c => c.country && REGION_COUNTRY_MAP[up].includes(c.country.toUpperCase()));
+      } else {
+        res = res.filter(c => !c.country || c.country.toUpperCase() === up);
+      }
     }
     
     // Subscriber range filter (exclude channels with hidden sub counts when specific range is queried)
@@ -602,7 +630,7 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
   let combined = [];
 
   for (const c of [...matchingLive, ...matchingCurated]) {
-    const key = (c.handle || c.id).toLowerCase();
+    const key = (c.id || c.handle).toLowerCase();
     if (!seen.has(key)) {
       seen.add(key);
       combined.push(c);
@@ -614,7 +642,7 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
   if (combined.length === 0 && country && country !== 'ANY') {
     const relaxedCountry = applyFilters(allCurated, niche, 'ANY', minSubs, maxSubs, query);
     for (const c of relaxedCountry) {
-      const key = (c.handle || c.id).toLowerCase();
+      const key = (c.id || c.handle).toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
         combined.push({
@@ -671,11 +699,9 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
       countryName: COUNTRY_NAMES[countryCode] || countryCode || 'United States',
       description: c.description || '',
       videoCount: c.videoCount || 0,
-      channelUrl: (safeHandle && safeHandle !== '@')
+      channelUrl: c.channelUrl || ((safeHandle && safeHandle !== '@')
         ? ('https://www.youtube.com/' + (safeHandle.startsWith('@') ? safeHandle : '@' + safeHandle))
-        : (c.id && c.id.startsWith('UC')
-            ? ('https://www.youtube.com/channel/' + encodeURIComponent(c.id))
-            : ('https://www.youtube.com/results?search_query=' + encodeURIComponent((c.title || '') + ' YouTube'))),
+        : ('https://www.youtube.com/results?search_query=' + encodeURIComponent((c.title || '') + ' YouTube'))),
       status: activeBadge,
       collabs: creatorCollabs,
       activeCollabBadge: activeBadge,

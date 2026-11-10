@@ -391,7 +391,7 @@
         <!-- Floating Pill Tag -->
         <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-5 border transition" style="background-color: var(--bg-pill); border-color: var(--card-hover-border); color: #c4b5fd;">
           <span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
-          <span>Tier-1 YouTube Micro-Creator Discovery</span>
+          <span>6,000+ Verified YouTube Creators Across 12 Niches (500 Per Category)</span>
         </div>
 
         <!-- Big Bold Title with Gradient Highlight -->
@@ -402,13 +402,13 @@
 
         <!-- Subtitle -->
         <p class="mt-4 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed" style="color: var(--text-secondary);">
-          Connect directly with active 1k &ndash; 10k creators across the US, UK, Canada &amp; Australia. Safe @mentions, instant channel visits, and authentic collaborations with zero spam.
+          Connect directly with 6,000+ active creators across 12 niches (500 channels per category) in the US, UK, Europe, Asia &amp; Global. Safe @mentions, instant channel visits, and authentic collaborations with zero spam.
         </p>
 
         <!-- Quick Switcher CTAs -->
         <div class="flex items-center justify-center gap-3 mt-6">
           <button type="button" onclick="document.getElementById('navDiscoverBtn').click()" class="text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center space-x-1.5 shadow-sm" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">
-            <span>⚡ Browse 1k &ndash; 10k Directory</span>
+            <span>⚡ Browse 6,000+ Creator Directory</span>
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
           <a href="#toolSection" class="text-xs font-semibold px-4 py-2.5 rounded-xl border transition flex items-center space-x-1.5" style="background-color: var(--bg-pill); border-color: var(--border-color); color: var(--text-primary);">
@@ -448,13 +448,15 @@
       <!-- 4 FLAT PILL DROPDOWNS -->
       <div class="max-w-2xl mx-auto mb-8 flex flex-wrap items-center justify-center gap-2.5">
         <select id="targetCountryInput" class="filter-pill-select">
-          <option value="TIER1" selected>Country: US & UK</option>
+          <option value="TIER1" selected>Region: US & UK</option>
           <option value="US">Country: US Only</option>
           <option value="GB">Country: UK Only</option>
+          <option value="EUROPE">Region: Europe</option>
+          <option value="ASIA">Region: Asia</option>
           <option value="CA">Country: Canada</option>
           <option value="AU">Country: Australia</option>
           <option value="DE">Country: Germany</option>
-          <option value="ANY">Country: Any / Global</option>
+          <option value="ANY">Region: World / Global</option>
         </select>
 
         <select id="maxSubsInput" class="filter-pill-select">
@@ -767,59 +769,75 @@
             </div>
           </div>
 
-          <!-- Filter Section: REGION (Categorized High CPM / RPM Countries) -->
+          <!-- Filter Section: REGION (World, US, UK, Europe, Asia, Oceania) -->
           <div id="regionPillGroup" class="space-y-3 pt-1">
             <div class="flex items-center justify-between">
               <h4 class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--text-muted);">Region</h4>
               <button type="button" class="pill-btn text-[11px] px-2.5 py-1" data-country="ANY">🌐 All (Global)</button>
             </div>
 
+            <!-- Main Region Quick Switcher (World, US, UK, Europe, Asia) -->
+            <div class="flex flex-wrap gap-1.5 pb-2.5 border-b" style="border-color: var(--border-color);">
+              <button type="button" class="pill-btn active text-xs font-semibold px-2.5 py-1" data-country="ANY">🌐 World</button>
+              <button type="button" class="pill-btn text-xs font-semibold px-2.5 py-1" data-country="US">🇺🇸 US</button>
+              <button type="button" class="pill-btn text-xs font-semibold px-2.5 py-1" data-country="GB">🇬🇧 UK</button>
+              <button type="button" class="pill-btn text-xs font-semibold px-2.5 py-1" data-country="EUROPE">🌍 Europe</button>
+              <button type="button" class="pill-btn text-xs font-semibold px-2.5 py-1" data-country="ASIA">🌏 Asia</button>
+            </div>
+
             <!-- North America -->
             <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center justify-between" style="color: var(--text-muted);">
                 <span>🌎 North America</span>
+                <button type="button" class="pill-btn text-[10px] px-2 py-0.5" data-country="NORTH_AMERICA">All NA</button>
               </div>
               <div class="flex flex-wrap gap-1.5">
-                <button type="button" class="pill-btn active" data-country="US">US 🇺🇸</button>
+                <button type="button" class="pill-btn" data-country="US">US 🇺🇸</button>
                 <button type="button" class="pill-btn" data-country="CA">CA 🇨🇦</button>
               </div>
             </div>
 
             <!-- Europe -->
             <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center justify-between" style="color: var(--text-muted);">
                 <span>🌍 Europe</span>
+                <button type="button" class="pill-btn text-[10px] px-2 py-0.5" data-country="EUROPE">All Europe</button>
               </div>
               <div class="flex flex-wrap gap-1.5">
                 <button type="button" class="pill-btn" data-country="GB">UK 🇬🇧</button>
                 <button type="button" class="pill-btn" data-country="DE">DE 🇩🇪</button>
-                <button type="button" class="pill-btn" data-country="NO">NO 🇳🇴</button>
-                <button type="button" class="pill-btn" data-country="CH">CH 🇨🇭</button>
+                <button type="button" class="pill-btn" data-country="FR">FR 🇫🇷</button>
+                <button type="button" class="pill-btn" data-country="ES">ES 🇪🇸</button>
                 <button type="button" class="pill-btn" data-country="NL">NL 🇳🇱</button>
+                <button type="button" class="pill-btn" data-country="SE">SE 🇸🇪</button>
+                <button type="button" class="pill-btn" data-country="IT">IT 🇮🇹</button>
                 <button type="button" class="pill-btn" data-country="IE">IE 🇮🇪</button>
                 <button type="button" class="pill-btn" data-country="AT">AT 🇦🇹</button>
-                <button type="button" class="pill-btn" data-country="FR">FR 🇫🇷</button>
-                <button type="button" class="pill-btn" data-country="FI">FI 🇫🇮</button>
-                <button type="button" class="pill-btn" data-country="SE">SE 🇸🇪</button>
+                <button type="button" class="pill-btn" data-country="CH">CH 🇨🇭</button>
+                <button type="button" class="pill-btn" data-country="NO">NO 🇳🇴</button>
               </div>
             </div>
 
             <!-- Asia -->
             <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center justify-between" style="color: var(--text-muted);">
                 <span>🌏 Asia</span>
+                <button type="button" class="pill-btn text-[10px] px-2 py-0.5" data-country="ASIA">All Asia</button>
               </div>
               <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="pill-btn" data-country="JP">JP 🇯🇵</button>
                 <button type="button" class="pill-btn" data-country="SG">SG 🇸🇬</button>
                 <button type="button" class="pill-btn" data-country="AE">AE 🇦🇪</button>
-                <button type="button" class="pill-btn" data-country="JP">JP 🇯🇵</button>
+                <button type="button" class="pill-btn" data-country="IN">IN 🇮🇳</button>
+                <button type="button" class="pill-btn" data-country="KR">KR 🇰🇷</button>
               </div>
             </div>
 
             <!-- Oceania -->
             <div>
-              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center space-x-1" style="color: var(--text-muted);">
+              <div class="text-[10px] font-bold tracking-wider uppercase mb-1.5 flex items-center justify-between" style="color: var(--text-muted);">
                 <span>🦘 Oceania</span>
+                <button type="button" class="pill-btn text-[10px] px-2 py-0.5" data-country="OCEANIA">All Oceania</button>
               </div>
               <div class="flex flex-wrap gap-1.5">
                 <button type="button" class="pill-btn" data-country="AU">AU 🇦🇺</button>
