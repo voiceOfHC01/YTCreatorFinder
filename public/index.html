@@ -1560,7 +1560,7 @@
     // FIREBASE CLOUD FIRESTORE INITIALIZATION
     // ==========================================
     const firebaseConfig = {
-      apiKey: "AIzaSyB1Kx92gUmFgfFtXojWqboUsvjcC4YQFr3k",
+      apiKey: "AIzaSyB1Kx92gUmFgfFtXojWqboUsvjC4YQFr3k",
       authDomain: "ytcreatorfinder.firebaseapp.com",
       projectId: "ytcreatorfinder",
       storageBucket: "ytcreatorfinder.firebasestorage.app",
@@ -1687,6 +1687,10 @@
           msg = 'Password should be at least 6 characters.';
         } else if (err.code === 'auth/invalid-email') {
           msg = 'Please enter a valid email address.';
+        } else if (err.code === 'auth/api-key-not-valid' || (err.message && err.message.includes('api-key-not-valid'))) {
+          msg = 'Firebase API Key এখনো সেট করা হয়নি। Firebase Console > Project Settings থেকে আসল firebaseConfig বসাতে হবে।';
+        } else if (err.code === 'auth/operation-not-allowed') {
+          msg = 'Email/Password লগইন চালু করা নেই। Firebase Console > Authentication > Sign-in method-এ গিয়ে Email/Password এনাবল করুন।';
         }
         errBox.textContent = msg;
         errBox.classList.remove('hidden');
@@ -1728,7 +1732,13 @@
         const errBox = document.getElementById('authErrorMessage');
         if (errBox) {
           if (err.code !== 'auth/popup-closed-by-user') {
-            errBox.textContent = err.message || 'Google sign-in failed. Please try again.';
+            let msg = err.message || 'Google sign-in failed. Please try again.';
+            if (err.code === 'auth/api-key-not-valid' || (err.message && err.message.includes('api-key-not-valid'))) {
+              msg = 'Firebase API Key এখনো সেট করা হয়নি। Firebase Console থেকে আসল firebaseConfig বসাতে হবে।';
+            } else if (err.code === 'auth/operation-not-allowed') {
+              msg = 'Google লগইন চালু করা নেই। Firebase Console > Authentication > Sign-in method-এ গিয়ে Google এনাবল করুন।';
+            }
+            errBox.textContent = msg;
             errBox.classList.remove('hidden');
           }
         }
@@ -2084,7 +2094,7 @@
               <button onclick="removeSavedCreator('${k}')" class="text-rose-500 hover:text-rose-400 p-1.5 rounded-lg text-xs font-semibold cursor-pointer" title="Remove bookmark">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               </button>
-              <a href="${sanitizeUrl(c.channelUrl)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center space-x-1" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">
+              <a href="${sanitizeUrl(c.channelUrl, (c.handle || c.title || 'YouTube Creator'))}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center space-x-1" style="background-color: var(--accent-btn); color: var(--accent-btn-text);">
                 <span>Visit</span>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7V17"/></svg>
               </a>
@@ -2452,7 +2462,7 @@
                 ` : ''}
 
                 <a 
-                  href="${sanitizeUrl(c.channelUrl)}" 
+                  href="${sanitizeUrl(c.channelUrl, (c.handle || c.title || 'YouTube Creator'))}" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   class="font-bold text-xs px-4 py-2 rounded-xl transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
@@ -2926,7 +2936,7 @@
           const countryCode = creator.countryCode || 'US';
           const subsFormatted = formatSubCount(creator.subscribers);
           const timeAgo = formatRelativeTime(creator.commentDate);
-          const safeChannelUrl = sanitizeUrl(creator.channelUrl);
+          const safeChannelUrl = sanitizeUrl(creator.channelUrl, (creator.handle || creator.title || 'YouTube Creator'));
           const highlightedComment = highlightTimestampsInText(creator.comment);
           const channelKey = (creator.handle || creator.channelUrl || creator.title || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
           const isSaved = !!savedCreators[channelKey];
@@ -3178,14 +3188,22 @@
 
     downloadCsvBtn.addEventListener('click', triggerCsvDownload);
 
-    function sanitizeUrl(rawUrl) {
-      if (!rawUrl || typeof rawUrl !== 'string') return '#';
+    function sanitizeUrl(rawUrl, fallbackSearchQuery = '') {
+      if (!rawUrl || typeof rawUrl !== 'string' || rawUrl === '#' || rawUrl.trim() === '') {
+        if (fallbackSearchQuery) {
+          return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(fallbackSearchQuery);
+        }
+        return '#';
+      }
       try {
         const parsed = new URL(rawUrl, window.location.origin);
         if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
           return parsed.href;
         }
       } catch (e) {}
+      if (fallbackSearchQuery) {
+        return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(fallbackSearchQuery);
+      }
       return '#';
     }
 

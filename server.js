@@ -671,7 +671,11 @@ async function discoverYouTubeChannels({ niche, query, country, minSubs, maxSubs
       countryName: COUNTRY_NAMES[countryCode] || countryCode || 'United States',
       description: c.description || '',
       videoCount: c.videoCount || 0,
-      channelUrl: safeHandle.startsWith('@') ? ('https://www.youtube.com/' + safeHandle) : ('https://www.youtube.com/channel/' + encodeURIComponent(c.id)),
+      channelUrl: (safeHandle && safeHandle !== '@')
+        ? ('https://www.youtube.com/' + (safeHandle.startsWith('@') ? safeHandle : '@' + safeHandle))
+        : (c.id && c.id.startsWith('UC')
+            ? ('https://www.youtube.com/channel/' + encodeURIComponent(c.id))
+            : ('https://www.youtube.com/results?search_query=' + encodeURIComponent((c.title || '') + ' YouTube'))),
       status: activeBadge,
       collabs: creatorCollabs,
       activeCollabBadge: activeBadge,
